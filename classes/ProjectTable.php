@@ -4,6 +4,7 @@
 namespace Davidany\CodeGen;
 
 use PDO;
+
 class ProjectTable
 {
 	/**
@@ -13,17 +14,15 @@ class ProjectTable
 	{
 	}
 
-	public function getListOfTables($projectId,$dbCredential)
+	public function getListOfTables($projectId, $dbCredential)
 	{
 
-
-
 		$dbProject = DB::getInstance($dbCredential->database, $dbCredential->host, $dbCredential->username, $dbCredential->password);
-		$sql = "SHOW TABLES FROM $dbCredential->database";
-		$stmt     = $dbProject->prepare($sql);
+		$sql       = "SHOW TABLES FROM $dbCredential->database";
+		$stmt      = $dbProject->prepare($sql);
 		$stmt->execute();
-		return $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+		return $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 
 	}

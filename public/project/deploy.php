@@ -1,13 +1,14 @@
 <?php
 
+use Davidany\CodeGen\CrudTemplateVariable;
 use Davidany\CodeGen\DbCredential;
 use Davidany\CodeGen\Project;
-use Davidany\CodeGen\ProjectTable;
-use Davidany\CodeGen\TableColumn;
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 //
+
+
 include($_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php');
 
 $projectId   = $_GET['id'];
@@ -18,7 +19,9 @@ $projectRows = $project->edit($projectId);
 $dbCredential    = new DbCredential();
 $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 
-$laravelCrudArray = [];
+
+//$d   = new CrudGenerator();
+//$bob = $d->getStub('Model');
 
 ?>
 
@@ -75,6 +78,7 @@ $laravelCrudArray = [];
 
 		if (isset($dbCredentialRow->host)) {
 
+
 			?>
 
 			<div class = "row">
@@ -112,77 +116,10 @@ $laravelCrudArray = [];
 
 
 			<?php
-
 			if (isset($dbCredentialRow->host)) {
-
-				$projectTable      = new ProjectTable();
-				$projectTableNames = $projectTable->getListOfTables($projectId, $dbCredentialRow);
-
-				foreach ($projectTableNames as $tableKey => $tableName) {
-
-					?>
-
-					<div class = "table-block col-md-4">
-						<?php
-
-						// get table names
-						$tableColumns = new TableColumn();
-						// get column names
-						$projectColumnNames = $tableColumns->getColumns($tableName, $dbCredentialRow);
-
-						// singularize table names
-						$singularTableName = \Davidany\CodeGen\Inflect::singularize($tableName);
-
-						// remove underscores
-						$capitalizedTableNameWithoutUnderscores = str_replace('_', '', ucwords($singularTableName, '_'));
-						$capitalizedTableNameWithDashes         = str_replace('_', '-', ucwords($singularTableName, '_'));
-
-						$unCapitalizedTableNameWithDashes = str_replace('_', '-', ($singularTableName));
-
-						// uncapitalize first letter
-						$unCapitalizedTableNameWithoutUnderscores = lcfirst($capitalizedTableNameWithoutUnderscores);
-
-
-						//					$tableNameWithoutUnderscores =
-						$laravelCrudArray[$tableKey]['tableName']                                = $tableName;
-						$laravelCrudArray[$tableKey]['singularTableName']                        = $singularTableName;
-						$laravelCrudArray[$tableKey]['unCapitalizedTableNameWithoutUnderscores'] = $unCapitalizedTableNameWithoutUnderscores;
-						$laravelCrudArray[$tableKey]['capitalizedTableNameWithoutUnderscores']   = $capitalizedTableNameWithoutUnderscores;
-						$laravelCrudArray[$tableKey]['unCapitalizedTableNameWithDashes']         = $unCapitalizedTableNameWithDashes;
-						$laravelCrudArray[$tableKey]['capitalizedTableNameWithDashes']           = $capitalizedTableNameWithDashes;
-						$laravelCrudArray[$tableKey]['ControllerName']                           = $capitalizedTableNameWithoutUnderscores . 'Controller';
-						$laravelCrudArray[$tableKey]['ModelClassName']                           = $capitalizedTableNameWithoutUnderscores;
-						$laravelCrudArray[$tableKey]['ViewFolderName']                           = $unCapitalizedTableNameWithoutUnderscores;
-						$laravelCrudArray[$tableKey]['RouteModelName']                           = $unCapitalizedTableNameWithDashes;
-						$laravelCrudArray[$tableKey]['Factory']                                  = $tableName;
-						$laravelCrudArray[$tableKey]['MigrationTableName']                       = $tableName;
-
-						foreach ($projectColumnNames as $columnKey => $columnName) {
-							$laravelCrudArray[$tableKey]['Columns'][$columnKey] = $columnName;
-
-						}
-
-						?>
-						<div class = "table-title">    <?= $tableName ?> </div>
-
-						<ul class = "tag-list">
-							<?php
-
-							foreach ($projectColumnNames as $columnKey => $columnName) {
-
-								echo '<li>' . $columnName . '</li>';
-							}
-							?>
-
-						</ul>
-					</div>
-					<?php
-				}
-
+				$crudTemplateVariable = new CrudTemplateVariable();
+				$crudTemplateVariable->build($dbCredentialRow, $projectId);
 			}
-			// $dbProject = DB::getInstance($dbCredentialRow->database,$dbCredentialRow->host,$dbCredentialRow->username,$dbCredentialRow->password);
-
-
 			?>
 
 		</div>
@@ -190,10 +127,7 @@ $laravelCrudArray = [];
 	<div class = "gen-container">
 		<h3>Relationships </h3>
 
-		<?php
-		print_x($laravelCrudArray);
 
-		?>
 	</div>
 
 
