@@ -22,6 +22,8 @@ class DB
 
 		echo '<br>';
 
+
+
 		if (!self::$instances[$db_name]) {
 			self::$instances[$db_name] = new PDO("" . DB_TYPE . ":host=" . $db_host . ";dbname=" . $db_name . "", $db_user, $db_pass);
 			self::$instances[$db_name]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

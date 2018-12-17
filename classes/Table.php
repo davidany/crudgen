@@ -5,8 +5,10 @@ namespace Davidany\CodeGen;
 
 use PDO;
 
-class Database
+class Table
 {
+
+	public $databaseObject;
 
 	public function insert($redirect_to)
 	{
@@ -15,7 +17,7 @@ class Database
 
 		if ($submit) {
 			$db   = DB::getInstance();
-			$stmt = $db->prepare("insert into db_credential ( `name`, `host`, `database`, `username`, `password` ) values ( :name, :host, :database, :username, :password )");
+			$stmt = $db->prepare("insert into database_connections ( `name`, `host`, `database`, `username`, `password` ) values ( :name, :host, :database, :username, :password )");
 			$stmt->bindParam(':name', $_POST['name']);
 			$stmt->bindParam(':host', $_POST['host']);
 			$stmt->bindParam(':database', $_POST['database']);
@@ -31,31 +33,27 @@ class Database
 	{
 		$db = DB::getInstance();
 
-		$stmt = $db->prepare('DELETE FROM db_credential WHERE `id` = :id');
+		$stmt = $db->prepare('DELETE FROM database_connections WHERE `id` = :id');
 		$stmt->bindParam('id', $databaseId);
 		$stmt->execute();
 	}
 
-	public function selectAll()
+	public function selectAll(Database $databaseObject)
 	{
-		$db   = DB::getInstance();
-		$sql  = "SELECT * FROM db_credential ";
-		$stmt = $db->prepare($sql);
+		$this->databaseObject = $databaseObject;
+		$db                   = DB::getInstance();
+		$sql                  = "SELECT * FROM database_connections ";
+		$stmt                 = $db->prepare($sql);
 		$stmt->execute();
 
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 
 	}
 
-	public function getDatabaseById($databaseId)
+	public function listTablesByDatabaseId($databaseResult)
 	{
-		$db   = DB::getInstance();
-		$sql  = "SELECT * FROM db_credential WHERE id=:id ";
-		$stmt = $db->prepare($sql);
-		$stmt->bindParam(':id', $databaseId);
-		$stmt->execute();
 
-		return $stmt->fetch(PDO::FETCH_OBJ);
+		print_x($databaseResult);
 
 	}
 

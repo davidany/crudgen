@@ -14,8 +14,8 @@ date_default_timezone_set('America/New_York');
 
 define('DB_TYPE', 'mysql');
 define('LOCALHOST', 'localhost');
-define('DB_USERNAME', 'crudgen');
-define('DB_NAME', 'homestead');
+define('DB_NAME', 'crudgen');
+define('DB_USERNAME', 'homestead');
 define('DB_PASSWORD', 'secret');
 
 
