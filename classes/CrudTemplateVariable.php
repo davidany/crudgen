@@ -76,7 +76,7 @@ class CrudTemplateVariable
 			$this->crudValueArray[$tableKey]['capitalizedTableNameWithDashes']                 = $capitalizedTableNameWithDashes;
 			$this->crudValueArray[$tableKey]['ControllerName']                                 = $capitalizedTableNameWithoutUnderscores . 'Controller';
 			$this->crudValueArray[$tableKey]['ModelClassName']                                 = $capitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['ViewFolderName']                                 = $unCapitalizedTableNameWithoutUnderscores;
+			$this->crudValueArray[$tableKey]['ViewFolderName']                                 = $unCapitalizedTableNameWithDashes;
 			$this->crudValueArray[$tableKey]['RouteModelName']                                 = $unCapitalizedTableNameWithDashes;
 			$this->crudValueArray[$tableKey]['Factory']                                        = $tableName;
 			$this->crudValueArray[$tableKey]['MigrationTableName']                             = $tableName;
@@ -91,7 +91,7 @@ class CrudTemplateVariable
 
 
 			}
-//var_dump($this->crudValueArray);
+print_x($this->crudValueArray);
 		}
 
 	}

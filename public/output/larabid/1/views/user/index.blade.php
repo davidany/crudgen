@@ -6,7 +6,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ViewDisplayTableName}} </div>
+                    <div class="card-header">Users </div>
 
 
 						<!-- will be used to show any messages -->
@@ -17,19 +17,19 @@
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
-									{{ViewIndexColumnTitleTR}}
+									<td scope="col">Id</td><td scope="col">Name</td><td scope="col">Email</td><td scope="col">Password</td><td scope="col">Remember Token</td><td scope="col">Created At</td><td scope="col">Updated At</td>
 									<td scope="col">Actions</td>
 
 								</tr>
 							</thead>
 							<tbody>
-								@if (${{ViewClassVariablePlural}})
-								   @foreach(${{ViewClassVariablePlural}} as ${{ViewClassVariableSingular}})
+								@if ($users)
+								   @foreach($users as $user)
 								<tr>
-									{{ViewIndexColumnValueTR}}
+									<td>{{$user["id"]}}</td><td>{{$user["name"]}}</td><td>{{$user["email"]}}</td><td>{{$user["password"]}}</td><td>{{$user["remember_token"]}}</td><td>{{$user["created_at"]}}</td><td>{{$user["updated_at"]}}</td>
 									<td>
 										<div class="form-group">
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
+										<a class="btn btn-sm btn-info" href="/user/{{$user['id']}}">Edit</a>
 
 										 </div>
 										<a class="btn btn-sm btn-danger" href="#">Delete</a>

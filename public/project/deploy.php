@@ -125,6 +125,9 @@ $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 				$generate = new CrudGenerator($crudTemplateVariable->crudValueArray);
 				$generate->getDestinationPath($projectRows->name);
 				$generate->buildModel();
+				$generate->buildController();
+				$generate->buildIndexView();
+				$generate->buildIndexView();
 				print_x($generate);
 
 			}

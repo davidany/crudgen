@@ -6,7 +6,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ViewDisplayTableName}} </div>
+                    <div class="card-header">Affiliate Offer Pool </div>
 
 
 						<!-- will be used to show any messages -->
@@ -17,19 +17,19 @@
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
-									{{ViewIndexColumnTitleTR}}
+									<td scope="col">Id</td><td scope="col">Affiliate Id</td><td scope="col">Offer Pool Id</td><td scope="col">Created At</td><td scope="col">Updated At</td>
 									<td scope="col">Actions</td>
 
 								</tr>
 							</thead>
 							<tbody>
-								@if (${{ViewClassVariablePlural}})
-								   @foreach(${{ViewClassVariablePlural}} as ${{ViewClassVariableSingular}})
+								@if ($affiliateOfferPool)
+								   @foreach($affiliateOfferPool as $affiliateOfferPool)
 								<tr>
-									{{ViewIndexColumnValueTR}}
+									<td>{{$affiliateOfferPool["id"]}}</td><td>{{$affiliateOfferPool["affiliate_id"]}}</td><td>{{$affiliateOfferPool["offer_pool_id"]}}</td><td>{{$affiliateOfferPool["created_at"]}}</td><td>{{$affiliateOfferPool["updated_at"]}}</td>
 									<td>
 										<div class="form-group">
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
+										<a class="btn btn-sm btn-info" href="/affiliate-offer-pool/{{$affiliateOfferPool['id']}}">Edit</a>
 
 										 </div>
 										<a class="btn btn-sm btn-danger" href="#">Delete</a>

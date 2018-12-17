@@ -6,7 +6,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ViewDisplayTableName}} </div>
+                    <div class="card-header">Query Aliases </div>
 
 
 						<!-- will be used to show any messages -->
@@ -17,19 +17,19 @@
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
-									{{ViewIndexColumnTitleTR}}
+									<td scope="col">Id</td><td scope="col">Path Id</td><td scope="col">Created At</td><td scope="col">Updated At</td>
 									<td scope="col">Actions</td>
 
 								</tr>
 							</thead>
 							<tbody>
-								@if (${{ViewClassVariablePlural}})
-								   @foreach(${{ViewClassVariablePlural}} as ${{ViewClassVariableSingular}})
+								@if ($queryAliases)
+								   @foreach($queryAliases as $queryAlias)
 								<tr>
-									{{ViewIndexColumnValueTR}}
+									<td>{{$queryAlias["id"]}}</td><td>{{$queryAlias["path_id"]}}</td><td>{{$queryAlias["created_at"]}}</td><td>{{$queryAlias["updated_at"]}}</td>
 									<td>
 										<div class="form-group">
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
+										<a class="btn btn-sm btn-info" href="/query-alias/{{$queryAlias['id']}}">Edit</a>
 
 										 </div>
 										<a class="btn btn-sm btn-danger" href="#">Delete</a>

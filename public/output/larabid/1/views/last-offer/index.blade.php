@@ -6,7 +6,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ViewDisplayTableName}} </div>
+                    <div class="card-header">Last Offers </div>
 
 
 						<!-- will be used to show any messages -->
@@ -17,19 +17,19 @@
 						<table class="table table-striped table-bordered">
 							<thead>
 								<tr>
-									{{ViewIndexColumnTitleTR}}
+									<td scope="col">Id</td><td scope="col">Path Id</td><td scope="col">Offer Pool Id</td><td scope="col">Offer Id</td><td scope="col">Email</td><td scope="col">Ip Address</td><td scope="col">Created At</td><td scope="col">Updated At</td>
 									<td scope="col">Actions</td>
 
 								</tr>
 							</thead>
 							<tbody>
-								@if (${{ViewClassVariablePlural}})
-								   @foreach(${{ViewClassVariablePlural}} as ${{ViewClassVariableSingular}})
+								@if ($lastOffers)
+								   @foreach($lastOffers as $lastOffer)
 								<tr>
-									{{ViewIndexColumnValueTR}}
+									<td>{{$lastOffer["id"]}}</td><td>{{$lastOffer["path_id"]}}</td><td>{{$lastOffer["offer_pool_id"]}}</td><td>{{$lastOffer["offer_id"]}}</td><td>{{$lastOffer["email"]}}</td><td>{{$lastOffer["ip_address"]}}</td><td>{{$lastOffer["created_at"]}}</td><td>{{$lastOffer["updated_at"]}}</td>
 									<td>
 										<div class="form-group">
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
+										<a class="btn btn-sm btn-info" href="/last-offer/{{$lastOffer['id']}}">Edit</a>
 
 										 </div>
 										<a class="btn btn-sm btn-danger" href="#">Delete</a>

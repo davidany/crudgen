@@ -14,7 +14,7 @@ class {{ControllerName}} extends Controller
     	// get all the {{ModelClassName}}
         ${{ControllerVariableName}} = {{ModelClassName}}::all();
         // load the view and pass the {{ControllerCompactName}}
-    	 return view('{{ViewFolderName}}.index', compact('{{ControllerCompactName}}')
+    	 return view('{{ViewFolderName}}.index', compact('{{ControllerCompactName}}'));
 
     }
 
@@ -34,7 +34,7 @@ class {{ControllerName}} extends Controller
     public function show($id)
     {
          ${{ControllerVariableName}} = {{ModelClassName}}::findOrFail($id);
-    	 return view('{{ViewFolderName}}.show', compact('{{ControllerCompactName}}')
+    	 return view('{{ViewFolderName}}.show', compact('{{ControllerCompactName}}'));
 
     }
 
