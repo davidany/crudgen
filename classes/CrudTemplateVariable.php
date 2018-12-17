@@ -25,7 +25,6 @@ class CrudTemplateVariable
 	public function getTablesAndColumns()
 	{
 
-		print_x($this->dbCredential);
 		$dbProject = DB::getInstance($this->dbCredential->database, $this->dbCredential->host, $this->dbCredential->username, $this->dbCredential->password);
 //		die();
 		$sql  = "SHOW TABLES FROM {$this->dbCredential->database}";
@@ -84,15 +83,17 @@ class CrudTemplateVariable
 			$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] = '';
 			$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] = '';
 			foreach ($this->projectColumnNames as $columnKey => $columnName) {
-				$this->crudValueArray[$tableKey]['Columns'][$columnKey]    = $columnName;
+				$displayColumnName                                         = str_replace('_', ' ', ucwords($columnName, '_'));
+				$this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnName']    = $columnName;
+				$this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnDisplayName']    = $displayColumnName;
 				$displayColumnName                                         = str_replace('_', ' ', ucwords($columnName, '_'));
 				$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] .= '<td scope="col">' . $displayColumnName . '</td>';
 				$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] .= '<td>{{$' . $unCapitalizedTableNameWithoutUnderscores . '["' . $columnName . '"]}}</td>';
 
 
 			}
-print_x($this->crudValueArray);
 		}
+//		print_x($this->crudValueArray);
 
 	}
 

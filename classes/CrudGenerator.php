@@ -40,8 +40,7 @@ class CrudGenerator
 		if ($files) {
 			$fileCount = count($files);
 		}
-		$this->versionNumber = $fileCount + 1;
-		print_x($this->versionNumber);
+		$this->versionNumber   = $fileCount + 1;
 		$this->destinationPath = $this->destinationPath . $this->versionNumber . '/';
 
 	}
@@ -95,13 +94,17 @@ class CrudGenerator
 
 	public function buildIndexView()
 	{
+//		print_x($this->crudValuesArray);
 		foreach ($this->crudValuesArray as $key => $value) {
+
+
 			$viewFolderName            = $this->crudValuesArray[$key]['ViewFolderName'];
 			$viewDisplayTableName      = $this->crudValuesArray[$key]['ViewDisplayTableName'];
 			$viewIndexColumnTitleTR    = $this->crudValuesArray[$key]['ViewIndexColumnTitleTR'];
 			$viewIndexColumnValueTR    = $this->crudValuesArray[$key]['ViewIndexColumnValueTR'];
 			$viewClassVariablePlural   = $this->crudValuesArray[$key]['ViewClassVariablePlural'];
 			$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+
 
 
 			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
@@ -118,5 +121,132 @@ class CrudGenerator
 		}
 	}
 
+	public function buildCreateView()
+	{
+
+		foreach ($this->crudValuesArray as $key => $value) {
+
+			$formBlockBuilder = '';
+
+			foreach ($value['Columns'] as $innerKey => $innerValue) {
+				$columnName           = $innerValue['ColumnName'];
+				$viewDisplayTableName = $innerValue['ColumnDisplayName'];
+				$formBlock            = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-view'));
+				$formBlock            = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+
+				$formBlockBuilder .= $formBlock;
+			}
+
+
+			$viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
+			$viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+
+
+			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			}
+			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('create'));
+			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+
+			file_put_contents($this->destinationPath . "views/{$viewFolderName}/create.blade.php", $modelTemplate);
+
+		}
+	}
+
+	public function buildShowView()
+	{
+
+		foreach ($this->crudValuesArray as $key => $value) {
+
+			$formBlockBuilder = '';
+
+			foreach ($value['Columns'] as $innerKey => $innerValue) {
+				$columnName                = $innerValue['ColumnName'];
+				$viewDisplayTableName      = $innerValue['ColumnDisplayName'];
+				$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+
+				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('paragraph-list-columns'));
+				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+
+				$formBlockBuilder .= $formBlock;
+			}
+
+
+			$viewFolderName            = $this->crudValuesArray[$key]['ViewFolderName'];
+			$viewDisplayTableName      = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+			$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+
+
+			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			}
+			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('show'));
+			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+			$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
+			$modelTemplate = str_replace(['{{ParagraphListColumns}}'], [$formBlockBuilder], $modelTemplate);
+
+			file_put_contents($this->destinationPath . "views/{$viewFolderName}/show.blade.php", $modelTemplate);
+
+		}
+
+	}
+
+	public function buildEditView()
+	{
+		foreach ($this->crudValuesArray as $key => $value) {
+
+			$formBlockBuilder = '';
+
+			foreach ($value['Columns'] as $innerKey => $innerValue) {
+				$columnName                = $innerValue['ColumnName'];
+				$viewDisplayTableName      = $innerValue['ColumnDisplayName'];
+				$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+
+				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
+				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+
+				$formBlockBuilder .= $formBlock;
+			}
+
+
+			$viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
+			$viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+
+
+			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			}
+			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
+			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+
+			file_put_contents($this->destinationPath . "views/{$viewFolderName}/edit.blade.php", $modelTemplate);
+
+		}
+	}
+
+	public function buildRoute()
+	{
+		foreach ($this->crudValuesArray as $key => $value) {
+			$controllerName = $this->crudValuesArray[$key]['ControllerName'];
+			$viewFolderName = $this->crudValuesArray[$key]['ViewFolderName'];
+
+			if (!file_exists($this->destinationPath . 'routes/')) {
+				mkdir($this->destinationPath . 'routes/', 0777, true);
+			}
+			$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $this->getStub('route'));
+			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
+
+			file_put_contents($this->destinationPath . "routes/{$controllerName}.php", $modelTemplate);
+
+		}
+
+	}
+
 
 }
+
+

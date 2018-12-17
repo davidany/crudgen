@@ -21,9 +21,6 @@ $dbCredential    = new DbCredential();
 $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 
 
-//$d   = new CrudGenerator();
-//$bob = $d->getStub('Model');
-
 ?>
 
 
@@ -120,15 +117,16 @@ $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 			if (isset($dbCredentialRow->host)) {
 				$crudTemplateVariable = new CrudTemplateVariable();
 				$crudTemplateVariable->build($dbCredentialRow, $projectId);
-//				print_x($crudTemplateVariable);
 
 				$generate = new CrudGenerator($crudTemplateVariable->crudValueArray);
 				$generate->getDestinationPath($projectRows->name);
 				$generate->buildModel();
 				$generate->buildController();
 				$generate->buildIndexView();
-				$generate->buildIndexView();
-				print_x($generate);
+				$generate->buildCreateView();
+				$generate->buildShowView();
+				$generate->buildEditView();
+				$generate->buildRoute();
 
 			}
 			?>
