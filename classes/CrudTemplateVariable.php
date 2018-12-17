@@ -19,7 +19,7 @@ class CrudTemplateVariable
 		$this->dbCredential = $dbCredential;
 		$this->projectId    = $projectId;
 		$this->getTablesAndColumns();
-
+//		print_x($this->crudValueArray);
 	}
 
 	public function getTablesAndColumns()
@@ -41,6 +41,11 @@ class CrudTemplateVariable
 			$stmt->execute();
 			$this->projectColumnNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
+			$capitalizedTableNameWithoutUnderscoresPlural   = str_replace('_', '', ucwords($tableName, '_'));
+			$capitalizedTableNameWithSpacesPlural           = str_replace('_', ' ', ucwords($tableName, '_'));
+			$unCapitalizedTableNameWithoutUnderscoresPlural = str_replace('_', '', ucwords($tableName, '_'));
+			$unCapitalizedTableNameWithoutUnderscoresPlural = lcfirst($unCapitalizedTableNameWithoutUnderscoresPlural);
+
 			// singularize table names
 			$singularTableName = Inflect::singularize($tableName);
 
@@ -49,27 +54,44 @@ class CrudTemplateVariable
 			$capitalizedTableNameWithDashes         = str_replace('_', '-', ucwords($singularTableName, '_'));
 			$unCapitalizedTableNameWithDashes       = str_replace('_', '-', ($singularTableName));
 
+
 			// uncapitalize first letter
 			$unCapitalizedTableNameWithoutUnderscores = lcfirst($capitalizedTableNameWithoutUnderscores);
 
-			$this->crudValueArray[$tableKey]['tableName']                                = $tableName;
-			$this->crudValueArray[$tableKey]['singularTableName']                        = $singularTableName;
-			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithoutUnderscores'] = $unCapitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['capitalizedTableNameWithoutUnderscores']   = $capitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithDashes']         = $unCapitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['capitalizedTableNameWithDashes']           = $capitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['ControllerName']                           = $capitalizedTableNameWithoutUnderscores . 'Controller';
-			$this->crudValueArray[$tableKey]['ModelClassName']                           = $capitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['ViewFolderName']                           = $unCapitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['RouteModelName']                           = $unCapitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['Factory']                                  = $tableName;
-			$this->crudValueArray[$tableKey]['MigrationTableName']                       = $tableName;
 
+			$this->crudValueArray[$tableKey]['tableName']                 = $tableName;
+			$this->crudValueArray[$tableKey]['ControllerName']            = $capitalizedTableNameWithoutUnderscores . 'Controller';
+			$this->crudValueArray[$tableKey]['ControllerVariableName']    = $unCapitalizedTableNameWithoutUnderscoresPlural;
+			$this->crudValueArray[$tableKey]['ControllerCompactName']     = $unCapitalizedTableNameWithoutUnderscoresPlural;
+			$this->crudValueArray[$tableKey]['ViewDisplayTableName']      = $capitalizedTableNameWithSpacesPlural;
+			$this->crudValueArray[$tableKey]['ViewClassVariablePlural']   = $unCapitalizedTableNameWithoutUnderscoresPlural;
+			$this->crudValueArray[$tableKey]['ViewClassVariableSingular'] = $unCapitalizedTableNameWithoutUnderscores;
+
+			$this->crudValueArray[$tableKey]['singularTableName']                              = $singularTableName;
+			$this->crudValueArray[$tableKey]['capitalizedTableNameWithoutUnderscoresPlural']   = $capitalizedTableNameWithoutUnderscoresPlural;
+			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithoutUnderscoresPlural'] = $unCapitalizedTableNameWithoutUnderscoresPlural;
+			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithoutUnderscores']       = $unCapitalizedTableNameWithoutUnderscores;
+			$this->crudValueArray[$tableKey]['capitalizedTableNameWithoutUnderscores']         = $capitalizedTableNameWithoutUnderscores;
+			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithDashes']               = $unCapitalizedTableNameWithDashes;
+			$this->crudValueArray[$tableKey]['capitalizedTableNameWithDashes']                 = $capitalizedTableNameWithDashes;
+			$this->crudValueArray[$tableKey]['ControllerName']                                 = $capitalizedTableNameWithoutUnderscores . 'Controller';
+			$this->crudValueArray[$tableKey]['ModelClassName']                                 = $capitalizedTableNameWithoutUnderscores;
+			$this->crudValueArray[$tableKey]['ViewFolderName']                                 = $unCapitalizedTableNameWithoutUnderscores;
+			$this->crudValueArray[$tableKey]['RouteModelName']                                 = $unCapitalizedTableNameWithDashes;
+			$this->crudValueArray[$tableKey]['Factory']                                        = $tableName;
+			$this->crudValueArray[$tableKey]['MigrationTableName']                             = $tableName;
+
+			$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] = '';
+			$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] = '';
 			foreach ($this->projectColumnNames as $columnKey => $columnName) {
-				$this->crudValueArray[$tableKey]['Columns'][$columnKey] = $columnName;
+				$this->crudValueArray[$tableKey]['Columns'][$columnKey]    = $columnName;
+				$displayColumnName                                         = str_replace('_', ' ', ucwords($columnName, '_'));
+				$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] .= '<td scope="col">' . $displayColumnName . '</td>';
+				$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] .= '<td>{{$' . $unCapitalizedTableNameWithoutUnderscores . '["' . $columnName . '"]}}</td>';
+
 
 			}
-
+//var_dump($this->crudValueArray);
 		}
 
 	}

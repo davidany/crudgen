@@ -1,5 +1,6 @@
 <?php
 
+use Davidany\CodeGen\CrudGenerator;
 use Davidany\CodeGen\CrudTemplateVariable;
 use Davidany\CodeGen\DbCredential;
 use Davidany\CodeGen\Project;
@@ -119,6 +120,13 @@ $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 			if (isset($dbCredentialRow->host)) {
 				$crudTemplateVariable = new CrudTemplateVariable();
 				$crudTemplateVariable->build($dbCredentialRow, $projectId);
+//				print_x($crudTemplateVariable);
+
+				$generate = new CrudGenerator($crudTemplateVariable->crudValueArray);
+				$generate->getDestinationPath($projectRows->name);
+				$generate->buildModel();
+				print_x($generate);
+
 			}
 			?>
 

@@ -2,44 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{{modelName}}Request;
-use App\{{modelName}};
+use Illuminate\Http\Request;
+use App\{{ModelClassName}};
 
-class {{modelName}}Controller extends Controller
+class {{ControllerName}} extends Controller
 {
+
     public function index()
     {
-        ${{modelNamePluralLowerCase}} = {{modelName}}::latest()->get();
 
-        return response()->json(${{modelNamePluralLowerCase}});
+    	// get all the {{ModelClassName}}
+        ${{ControllerVariableName}} = {{ModelClassName}}::all();
+        // load the view and pass the {{ControllerCompactName}}
+    	 return view('{{ViewFolderName}}.index', compact('{{ControllerCompactName}}')
+
     }
 
-    public function store({{modelName}}Request $request)
+    public function create()
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::create($request->all());
-
-        return response()->json(${{modelNameSingularLowerCase}}, 201);
+        // load the create form (app/views/{{modelNamePluralLowerCase}}/create.blade.php)
+        return view('{{modelNamePluralLowerCase}}.create');
     }
+
+    public function store(Request $request)
+    {
+        {{ModelClassName}}::create($request->all());
+	    return redirect()->route('{{ViewFolderName}}.index');
+    }
+
 
     public function show($id)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
+         ${{ControllerVariableName}} = {{ModelClassName}}::findOrFail($id);
+    	 return view('{{ViewFolderName}}.show', compact('{{ControllerCompactName}}')
 
-        return response()->json(${{modelNameSingularLowerCase}});
     }
 
-    public function update({{modelName}}Request $request, $id)
+    public function update(Request $request, $id)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-        ${{modelNameSingularLowerCase}}->update($request->all());
+        ${{ControllerVariableName}} = {{ModelClassName}}::findOrFail($id);
+        ${{ControllerVariableName}}->fill($request->all());
+        ${{ControllerVariableName}}->save();
+        return view('{{ViewFolderName}}.index');
 
-        return response()->json(${{modelNameSingularLowerCase}}, 200);
     }
 
     public function destroy($id)
     {
-        {{modelName}}::destroy($id);
-
-        return response()->json(null, 204);
+        {{ModelClassName}}::destroy($id);
+		return view('{{ViewFolderName}}.index');
     }
 }
