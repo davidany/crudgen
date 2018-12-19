@@ -29,10 +29,10 @@
 									{{ViewIndexColumnValueTR}}
 									<td>
 										<div class="form-group">
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
+										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/edit/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
 
 										 </div>
-										<a class="btn btn-sm btn-danger" href="#">Delete</a>
+										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/destroy/{{${{ViewClassVariableSingular}}['id']}}">Delete</a>
 										</td>
 								</tr>
 						@endforeach

@@ -20,8 +20,8 @@ class {{ControllerName}} extends Controller
 
     public function create()
     {
-        // load the create form (app/views/{{modelNamePluralLowerCase}}/create.blade.php)
-        return view('{{modelNamePluralLowerCase}}.create');
+        // load the create form (app/views/{{ViewFolderName}}/create.blade.php)
+        return view('{{ViewFolderName}}.create');
     }
 
     public function store(Request $request)

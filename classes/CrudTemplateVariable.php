@@ -3,6 +3,7 @@
 
 namespace Davidany\CodeGen;
 
+use Carbon\Carbon;
 use PDO;
 
 class CrudTemplateVariable
@@ -54,46 +55,53 @@ class CrudTemplateVariable
 			$unCapitalizedTableNameWithDashes       = str_replace('_', '-', ($singularTableName));
 
 
+			//Migration Class Name
+			$migrationClassName = 'Create' . $capitalizedTableNameWithoutUnderscores . 'Table';
+			//Migration File Name
+			$date                = Carbon::now();
+			$migrationDatePrefix = $date->format('Y_m_d_His');
+
+			$migrationFileName = $migrationDatePrefix . '_create_' . $tableName . '_table';
 			// uncapitalize first letter
 			$unCapitalizedTableNameWithoutUnderscores = lcfirst($capitalizedTableNameWithoutUnderscores);
 
 
-			$this->crudValueArray[$tableKey]['tableName']                 = $tableName;
-			$this->crudValueArray[$tableKey]['ControllerName']            = $capitalizedTableNameWithoutUnderscores . 'Controller';
-			$this->crudValueArray[$tableKey]['ControllerVariableName']    = $unCapitalizedTableNameWithoutUnderscoresPlural;
-			$this->crudValueArray[$tableKey]['ControllerCompactName']     = $unCapitalizedTableNameWithoutUnderscoresPlural;
-			$this->crudValueArray[$tableKey]['ViewDisplayTableName']      = $capitalizedTableNameWithSpacesPlural;
-			$this->crudValueArray[$tableKey]['ViewClassVariablePlural']   = $unCapitalizedTableNameWithoutUnderscoresPlural;
-			$this->crudValueArray[$tableKey]['ViewClassVariableSingular'] = $unCapitalizedTableNameWithoutUnderscores;
-
-			$this->crudValueArray[$tableKey]['singularTableName']                              = $singularTableName;
-			$this->crudValueArray[$tableKey]['capitalizedTableNameWithoutUnderscoresPlural']   = $capitalizedTableNameWithoutUnderscoresPlural;
-			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithoutUnderscoresPlural'] = $unCapitalizedTableNameWithoutUnderscoresPlural;
-			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithoutUnderscores']       = $unCapitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['capitalizedTableNameWithoutUnderscores']         = $capitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['unCapitalizedTableNameWithDashes']               = $unCapitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['capitalizedTableNameWithDashes']                 = $capitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['ControllerName']                                 = $capitalizedTableNameWithoutUnderscores . 'Controller';
-			$this->crudValueArray[$tableKey]['ModelClassName']                                 = $capitalizedTableNameWithoutUnderscores;
-			$this->crudValueArray[$tableKey]['ViewFolderName']                                 = $unCapitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['RouteModelName']                                 = $unCapitalizedTableNameWithDashes;
-			$this->crudValueArray[$tableKey]['Factory']                                        = $tableName;
-			$this->crudValueArray[$tableKey]['MigrationTableName']                             = $tableName;
-
-			$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] = '';
-			$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] = '';
+			$this->crudValueArray[$tableKey] = [
+				'ControllerName'                                 => $capitalizedTableNameWithoutUnderscores . 'Controller',
+				'MigrationClassName'                             => $migrationClassName,
+				'MigrationFileName'                              => $migrationFileName,
+				'MigrationTableName'                             => $tableName,
+				'ControllerVariableName'                         => $unCapitalizedTableNameWithoutUnderscoresPlural,
+				'ControllerCompactName'                          => $unCapitalizedTableNameWithoutUnderscoresPlural,
+				'ViewDisplayTableName'                           => $capitalizedTableNameWithSpacesPlural,
+				'ViewClassVariablePlural'                        => $unCapitalizedTableNameWithoutUnderscoresPlural,
+				'ViewClassVariableSingular'                      => $unCapitalizedTableNameWithoutUnderscores,
+				'singularTableName'                              => $singularTableName,
+				'capitalizedTableNameWithoutUnderscoresPlural'   => $capitalizedTableNameWithoutUnderscoresPlural,
+				'unCapitalizedTableNameWithoutUnderscoresPlural' => $unCapitalizedTableNameWithoutUnderscoresPlural,
+				'unCapitalizedTableNameWithoutUnderscores'       => $unCapitalizedTableNameWithoutUnderscores,
+				'capitalizedTableNameWithoutUnderscores'         => $capitalizedTableNameWithoutUnderscores,
+				'unCapitalizedTableNameWithDashes'               => $unCapitalizedTableNameWithDashes,
+				'capitalizedTableNameWithDashes'                 => $capitalizedTableNameWithDashes,
+				'ModelClassName'                                 => $capitalizedTableNameWithoutUnderscores,
+				'ViewFolderName'                                 => $unCapitalizedTableNameWithDashes,
+				'RouteModelName'                                 => $unCapitalizedTableNameWithDashes,
+				'Factory'                                        => $tableName,
+				'ViewIndexColumnTitleTR'                         => '',
+				'ViewIndexColumnValueTR'                         => ''
+			];
 			foreach ($this->projectColumnNames as $columnKey => $columnName) {
-				$displayColumnName                                         = str_replace('_', ' ', ucwords($columnName, '_'));
-				$this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnName']    = $columnName;
-				$this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnDisplayName']    = $displayColumnName;
-				$displayColumnName                                         = str_replace('_', ' ', ucwords($columnName, '_'));
-				$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] .= '<td scope="col">' . $displayColumnName . '</td>';
-				$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] .= '<td>{{$' . $unCapitalizedTableNameWithoutUnderscores . '["' . $columnName . '"]}}</td>';
+				$displayColumnName                                                           = str_replace('_', ' ', ucwords($columnName, '_'));
+				$this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnName']        = $columnName;
+				$this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnDisplayName'] = $displayColumnName;
+				$displayColumnName                                                           = str_replace('_', ' ', ucwords($columnName, '_'));
+				$this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR']                   .= '<td scope="col">' . $displayColumnName . '</td>';
+				$this->crudValueArray[$tableKey]['ViewIndexColumnValueTR']                   .= '<td>{{$' . $unCapitalizedTableNameWithoutUnderscores . '["' . $columnName . '"]}}</td>';
 
 
 			}
 		}
-//		print_x($this->crudValueArray);
+		print_x($this->crudValueArray);
 
 	}
 

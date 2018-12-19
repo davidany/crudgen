@@ -127,7 +127,7 @@ $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 				$generate->buildShowView();
 				$generate->buildEditView();
 				$generate->buildRoute();
-
+				$generate->buildMigration();
 			}
 			?>
 

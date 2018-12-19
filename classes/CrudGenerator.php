@@ -246,6 +246,41 @@ class CrudGenerator
 
 	}
 
+	public function buildMigration()
+	{
+		foreach ($this->crudValuesArray as $key => $value) {
+
+			$migrationUpBlockBuilder = '';
+
+			foreach ($value['Columns'] as $innerKey => $innerValue) {
+				$columnName                = $innerValue['ColumnName'];
+				$viewDisplayTableName      = $innerValue['ColumnDisplayName'];
+				$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+
+				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
+				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+
+				$formBlockBuilder .= $formBlock;
+			}
+
+
+			$viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
+			$viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+
+
+			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			}
+			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
+			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+
+			file_put_contents($this->destinationPath . "views/{$viewFolderName}/edit.blade.php", $modelTemplate);
+
+		}
+	}
+
 
 }
 

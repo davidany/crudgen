@@ -13,7 +13,7 @@ $root = ($_SERVER['DOCUMENT_ROOT'] );
 		<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 
 			<li class="nav-item">
-				<a class="nav-link" href="../databaseView.php">Database</a>
+				<a class="nav-link" href="../db_credential/index.php">Database</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="../project/index.php">Projects</a>
