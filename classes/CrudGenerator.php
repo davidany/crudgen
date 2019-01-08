@@ -16,6 +16,7 @@ class CrudGenerator
 	{
 		$this->crudValuesArray = $crudValuesArray;
 
+//		print_x($this->crudValuesArray);
 	}
 
 	public function getDestinationPath($projectName)
@@ -53,6 +54,9 @@ class CrudGenerator
 
 	public function buildModel()
 	{
+
+		print_x($this->crudValuesArray);
+//		die();
 		foreach ($this->crudValuesArray as $key => $value) {
 			$name = $this->crudValuesArray[$key]['ModelClassName'];
 
@@ -106,7 +110,6 @@ class CrudGenerator
 			$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
 
 
-
 			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
 				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
 			}
@@ -123,6 +126,7 @@ class CrudGenerator
 
 	public function buildCreateView()
 	{
+
 
 		foreach ($this->crudValuesArray as $key => $value) {
 
@@ -248,35 +252,98 @@ class CrudGenerator
 
 	public function buildMigration()
 	{
+
 		foreach ($this->crudValuesArray as $key => $value) {
 
-			$migrationUpBlockBuilder = '';
+			$formBlockBuilder = '';
 
 			foreach ($value['Columns'] as $innerKey => $innerValue) {
-				$columnName                = $innerValue['ColumnName'];
-				$viewDisplayTableName      = $innerValue['ColumnDisplayName'];
-				$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+				$migrationTableName = $innerValue['ColumnName'];
+				$migrationTableType = $innerValue['ColumnType'];
+				$migrationNull      = $innerValue['Null'];
+				$migrationKey       = $innerValue['Key'];
+				$migrationDefault   = $innerValue['Default'];
+				$migrationExtra     = $innerValue['Extra'];
 
-				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
-				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
-				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+				$columnBuilder = '$table->';
 
-				$formBlockBuilder .= $formBlock;
+
+				if ($migrationKey == 'MUL') {
+					$columnBuilder .= "unsignedInteger('$migrationTableName')";
+				} elseif ($migrationKey == 'PRI') {
+					$columnBuilder .= "increments('$migrationTableName')";
+				} else {
+
+					$tinyIntSearch      = '/^tinyint/';
+					$intSearch          = '/^int/';
+					$decimalSearch      = '/^decimal/';
+					$decimalInnerSearch = '/\d*\,\d*/';
+					$timestampSearch    = '/^timestamp/';
+					$datetimeSearch     = '/^datetime/';
+					$varSearch          = '/^varchar/';
+					$varInnerSearch     = '/\d+/';
+					$charSearch         = '/^char/';
+
+					if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
+						$columnBuilder .= "tinyint('$migrationTableName')";
+					}
+					if (preg_match($intSearch, $migrationTableType, $match)) {
+						$columnBuilder .= "integer('$migrationTableName')";
+					}
+					if (preg_match($timestampSearch, $migrationTableType, $match)) {
+						$columnBuilder .= "timestamp('$migrationTableName')";
+					}
+					if (preg_match($datetimeSearch, $migrationTableType, $match)) {
+						$columnBuilder .= "dateTime('$migrationTableName')";
+					}
+
+					if (preg_match($decimalSearch, $migrationTableType, $match)) {
+						preg_match($decimalInnerSearch, $migrationTableType, $matches);
+						$deciNum       = explode(',', $matches[0]);
+						$columnBuilder .= "decimal('$migrationTableName',$deciNum[0],$deciNum[1])";
+					}
+					if (preg_match($varSearch, $migrationTableType, $match)) {
+						preg_match($varInnerSearch, $migrationTableType, $matches);
+						$columnBuilder .= "string('$migrationTableName',$matches[0])";
+					}
+					if (preg_match($charSearch, $migrationTableType, $match)) {
+						preg_match($varInnerSearch, $migrationTableType, $matches);
+						$columnBuilder .= "char('$migrationTableName',$matches[0])";
+					}
+
+
+				}
+//				if ($migrationTableType == )
+				if ($migrationDefault != '') {
+					$columnBuilder .= "->default($migrationDefault)";
+				}
+				if ($migrationNull == 'YES') {
+					$columnBuilder .= '->nullable()';
+				}
+
+				$columnBuilder .= ';';
+
+//				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
+//				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+//				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+
+				$formBlockBuilder .= $columnBuilder;
 			}
 
 
-			$viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
-			$viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+			$migrationTableName = $this->crudValuesArray[$key]['MigrationTableName'];
+			$migrationClassName = $this->crudValuesArray[$key]['MigrationClassName'];
+			$viewFolderName     = $this->crudValuesArray[$key]['ViewFolderName'];
+			$migrationFileName  = $this->crudValuesArray[$key]['MigrationFileName'];
 
-
-			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
-				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			if (!file_exists($this->destinationPath . 'migrations' )) {
+				mkdir($this->destinationPath . 'migrations/', 0777, true);
 			}
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
-			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+			$modelTemplate = str_replace(['{{MigrationTableList}}'], [$formBlockBuilder], $this->getStub('migration'));
+			$modelTemplate = str_replace(['{{MigrationClassName}}'], [$migrationClassName], $modelTemplate);
+			$modelTemplate = str_replace(['{{MigrationTableName}}'], [$migrationTableName], $modelTemplate);
 
-			file_put_contents($this->destinationPath . "views/{$viewFolderName}/edit.blade.php", $modelTemplate);
+			file_put_contents($this->destinationPath . "migrations/{$migrationFileName}.php", $modelTemplate);
 
 		}
 	}

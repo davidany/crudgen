@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class {{MigrationClassName}} extends Migration
+class CreateWeightTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class {{MigrationClassName}} extends Migration
      */
     public function up()
     {
-        Schema::create('{{MigrationTableName}}', function (Blueprint $table) {
-          {{MigrationTableList}}
+        Schema::create('weights', function (Blueprint $table) {
+          $table->increments('id');$table->decimal('weight',5,1)->nullable();$table->string('units',255)->nullable();$table->unsignedInteger('user_id');
         });
     }
 
@@ -23,6 +23,6 @@ class {{MigrationClassName}} extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('{{MigrationTableName}}');
+        Schema::dropIfExists('weights');
     }
 }
