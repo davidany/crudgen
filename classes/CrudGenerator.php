@@ -283,6 +283,8 @@ class CrudGenerator
 					$varSearch          = '/^varchar/';
 					$varInnerSearch     = '/\d+/';
 					$charSearch         = '/^char/';
+					$textSearch         = '/^text/';
+					$enumSearch         = '/^enum/';
 
 					if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
 						$columnBuilder .= "tinyint('$migrationTableName')";
@@ -295,6 +297,31 @@ class CrudGenerator
 					}
 					if (preg_match($datetimeSearch, $migrationTableType, $match)) {
 						$columnBuilder .= "dateTime('$migrationTableName')";
+					}
+					if (preg_match($textSearch, $migrationTableType, $match)) {
+						$columnBuilder .= "text('$migrationTableName')";
+					}
+					if (preg_match($enumSearch, $migrationTableType, $match)) {
+
+
+						if (preg_match('!\(([^\)]+)\)!', $migrationTableType, $enumValues)) {
+							$enumValueText = $enumValues[1];
+						}
+
+						$enumValueArray = explode(',', $enumValueText);
+
+		
+
+
+
+						$columnBuilder .= "enum('$migrationTableName',[";
+						foreach($enumValueArray as $value){
+							$columnBuilder .= $value . ',';
+						}
+						$columnBuilder = rtrim($columnBuilder,',');
+						$columnBuilder .= '])';
+
+
 					}
 
 					if (preg_match($decimalSearch, $migrationTableType, $match)) {
@@ -329,6 +356,7 @@ class CrudGenerator
 
 				$formBlockBuilder .= $columnBuilder;
 			}
+			$formBlockBuilder .= '$table->timestamps();';
 
 
 			$migrationTableName = $this->crudValuesArray[$key]['MigrationTableName'];
@@ -336,12 +364,13 @@ class CrudGenerator
 			$viewFolderName     = $this->crudValuesArray[$key]['ViewFolderName'];
 			$migrationFileName  = $this->crudValuesArray[$key]['MigrationFileName'];
 
-			if (!file_exists($this->destinationPath . 'migrations' )) {
+			if (!file_exists($this->destinationPath . 'migrations')) {
 				mkdir($this->destinationPath . 'migrations/', 0777, true);
 			}
 			$modelTemplate = str_replace(['{{MigrationTableList}}'], [$formBlockBuilder], $this->getStub('migration'));
 			$modelTemplate = str_replace(['{{MigrationClassName}}'], [$migrationClassName], $modelTemplate);
 			$modelTemplate = str_replace(['{{MigrationTableName}}'], [$migrationTableName], $modelTemplate);
+
 
 			file_put_contents($this->destinationPath . "migrations/{$migrationFileName}.php", $modelTemplate);
 
