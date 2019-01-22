@@ -243,6 +243,8 @@ class CrudGenerator
 
 	public function buildRoute()
 	{
+
+		$routeBuilder = '';
 		foreach ($this->crudValuesArray as $key => $value) {
 			$controllerName = $this->crudValuesArray[$key]['ControllerName'];
 			$viewFolderName = $this->crudValuesArray[$key]['ViewFolderName'];
@@ -253,9 +255,14 @@ class CrudGenerator
 			$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $this->getStub('route'));
 			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
 
-			file_put_contents($this->destinationPath . "routes/{$controllerName}.php", $modelTemplate);
+			$routeBuilder .= $modelTemplate;
+			$routeBuilder .= "\r\n";
+			$routeBuilder .= "\r\n";
+			$routeBuilder .= "\r\n";
 
 		}
+		file_put_contents($this->destinationPath . "routes/web.php", $routeBuilder);
+
 
 	}
 
