@@ -76,6 +76,7 @@ class CrudGenerator
 			$modelClassName                   = $this->crudValuesArray[$key]['ModelClassName'];
 			$controllerName                   = $this->crudValuesArray[$key]['ControllerName'];
 			$controllerVariableName           = $this->crudValuesArray[$key]['ControllerVariableName'];
+			$controllerVariableNameSingular           = $this->crudValuesArray[$key]['ControllerVariableNameSingular'];
 			$controllerCompactName            = $this->crudValuesArray[$key]['ControllerCompactName'];
 			$viewFolderName                   = $this->crudValuesArray[$key]['ViewFolderName'];
 			$unCapitalizedTableNameWithDashes = $this->crudValuesArray[$key]['unCapitalizedTableNameWithDashes'];
@@ -84,9 +85,16 @@ class CrudGenerator
 			if (!file_exists($this->destinationPath . 'controllers/')) {
 				mkdir($this->destinationPath . 'controllers/', 0777, true);
 			}
+			echo 'd';
+			echo '<br>';
+			echo $controllerVariableName;
+			echo '<br>';
+			echo 'd';
+
 			$modelTemplate = str_replace(['{{ModelClassName}}'], [$modelClassName], $this->getStub('Controller'));
 			$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $modelTemplate);
 			$modelTemplate = str_replace(['{{ControllerVariableName}}'], [$controllerVariableName], $modelTemplate);
+			$modelTemplate = str_replace(['{{ControllerVariableNameSingular}}'], [$controllerVariableNameSingular], $modelTemplate);
 			$modelTemplate = str_replace(['{{ControllerCompactName}}'], [$controllerCompactName], $modelTemplate);
 			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
 			$modelTemplate = str_replace(['{{unCapitalizedTableNameWithDashes}}'], [$unCapitalizedTableNameWithDashes], $modelTemplate);
@@ -225,6 +233,7 @@ class CrudGenerator
 			}
 			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
 			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+			$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
 			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
 
 			file_put_contents($this->destinationPath . "views/{$viewFolderName}/edit.blade.php", $modelTemplate);
@@ -287,7 +296,7 @@ class CrudGenerator
 					$enumSearch         = '/^enum/';
 
 					if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
-						$columnBuilder .= "tinyint('$migrationTableName')";
+						$columnBuilder .= "tinyInteger('$migrationTableName')";
 					}
 					if (preg_match($intSearch, $migrationTableType, $match)) {
 						$columnBuilder .= "integer('$migrationTableName')";
@@ -302,26 +311,16 @@ class CrudGenerator
 						$columnBuilder .= "text('$migrationTableName')";
 					}
 					if (preg_match($enumSearch, $migrationTableType, $match)) {
-
-
 						if (preg_match('!\(([^\)]+)\)!', $migrationTableType, $enumValues)) {
 							$enumValueText = $enumValues[1];
 						}
-
 						$enumValueArray = explode(',', $enumValueText);
-
-		
-
-
-
-						$columnBuilder .= "enum('$migrationTableName',[";
-						foreach($enumValueArray as $value){
+						$columnBuilder  .= "enum('$migrationTableName',[";
+						foreach ($enumValueArray as $value) {
 							$columnBuilder .= $value . ',';
 						}
-						$columnBuilder = rtrim($columnBuilder,',');
+						$columnBuilder = rtrim($columnBuilder, ',');
 						$columnBuilder .= '])';
-
-
 					}
 
 					if (preg_match($decimalSearch, $migrationTableType, $match)) {
@@ -356,7 +355,7 @@ class CrudGenerator
 
 				$formBlockBuilder .= $columnBuilder;
 			}
-			$formBlockBuilder .= '$table->timestamps();';
+//			$formBlockBuilder .= '$table->timestamps();';
 
 
 			$migrationTableName = $this->crudValuesArray[$key]['MigrationTableName'];

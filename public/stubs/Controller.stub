@@ -33,23 +33,31 @@ class {{ControllerName}} extends Controller
 
     public function show($id)
     {
-         ${{ControllerVariableName}} = {{ModelClassName}}::findOrFail($id);
-    	 return view('{{ViewFolderName}}.show', compact('{{ControllerCompactName}}'));
+         ${{ControllerVariableNameSingular}} = {{ModelClassName}}::findOrFail($id);
+    	 return view('{{ViewFolderName}}.show', compact('{{ControllerVariableNameSingular}}'));
+
+    }
+    public function edit($id)
+    {
+         ${{ControllerVariableNameSingular}} = {{ModelClassName}}::findOrFail($id);
+    	 return view('{{ViewFolderName}}.edit', compact('{{ControllerVariableNameSingular}}'));
 
     }
 
     public function update(Request $request, $id)
     {
-        ${{ControllerVariableName}} = {{ModelClassName}}::findOrFail($id);
-        ${{ControllerVariableName}}->fill($request->all());
-        ${{ControllerVariableName}}->save();
-        return view('{{ViewFolderName}}.index');
+        ${{ControllerVariableNameSingular}} = {{ModelClassName}}::findOrFail($id);
+        ${{ControllerVariableNameSingular}}->fill($request->all());
+        ${{ControllerVariableNameSingular}}->save();
+        return redirect()->route('{{ViewFolderName}}.index');
 
     }
 
     public function destroy($id)
     {
-        {{ModelClassName}}::destroy($id);
-		return view('{{ViewFolderName}}.index');
+            ${{ControllerVariableNameSingular}} = {{ModelClassName}}::findOrFail($id);
+
+        ${{ControllerVariableNameSingular}}->delete();
+        return redirect()->route('{{ViewFolderName}}.index');
     }
 }

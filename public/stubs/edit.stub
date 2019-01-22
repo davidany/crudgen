@@ -4,8 +4,9 @@
 
     <div class="container">
 		<h1>Edit {{ViewDisplayTableName}} </h1>
-        <form method="post"  class="form-horizontal" action="{{ViewFolderName}}/update">
 
+        <form method="post"  class="form-horizontal" action="/{{ViewFolderName}}/update/{{${{ViewClassVariableSingular}}->id}}">
+		@csrf
 		{{FormBlockBuilder}}
 
 	   <div class="form-group">

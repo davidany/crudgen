@@ -1,8 +1,8 @@
 @extends('base')
 
 @section('content')
-        <form method="post"  class="form-horizontal" action="{{ViewFolderName}}/add">
-
+        <form method="post"  class="form-horizontal" action="/{{ViewFolderName}}/store">
+@csrf
 
     <div class="container">
 
@@ -12,10 +12,10 @@
 			</div>
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="{{ViewFolderName}}/index">View All {{ViewDisplayTableName}}</a>
+                    <a href="/{{ViewFolderName}}/index">View All {{ViewDisplayTableName}}</a>
                 </li>
                 <li>
-                    <a href="{{ViewFolderName}}/create">Create {{ViewDisplayTableName}}</a>
+                    <a href="/{{ViewFolderName}}/create">Create {{ViewDisplayTableName}}</a>
             </ul>
         </nav>
 

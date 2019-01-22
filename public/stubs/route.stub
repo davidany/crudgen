@@ -3,5 +3,5 @@ Route::get('{{ViewFolderName}}/create', '{{ControllerName}}@create')->name('{{Vi
 Route::post('{{ViewFolderName}}/store', '{{ControllerName}}@store')->name('{{ViewFolderName}}.store');
 Route::get('{{ViewFolderName}}/show/{id}', '{{ControllerName}}@show')->name('{{ViewFolderName}}.show');
 Route::get('{{ViewFolderName}}/edit/{id}', '{{ControllerName}}@edit')->name('{{ViewFolderName}}.edit');
-Route::patch('{{ViewFolderName}}/update/{id}', '{{ControllerName}}@update')->name('{{ViewFolderName}}.update');
-Route::delete('{{ViewFolderName}}/destroy/{id}', '{{ControllerName}}@destroy')->name('{{ViewFolderName}}.destroy');
+Route::post('{{ViewFolderName}}/update/{id}', '{{ControllerName}}@update')->name('{{ViewFolderName}}.update');
+Route::get('{{ViewFolderName}}/destroy/{id}', '{{ControllerName}}@destroy')->name('{{ViewFolderName}}.destroy');

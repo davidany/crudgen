@@ -4,8 +4,8 @@
 
     <div class="container">
 		<h1>Add {{ViewDisplayTableName}} </h1>
-        <form method="post"  class="form-horizontal" action="{{ViewFolderName}}/add">
-
+        <form method="post"  class="form-horizontal" action="/{{ViewFolderName}}/store">
+		@csrf
 		{{FormBlockBuilder}}
 
 	   <div class="form-group">

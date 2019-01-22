@@ -9,11 +9,11 @@ use PDO;
 class CrudTemplateVariable
 {
 
-	public  $projectTableNames;
-	public  $dbCredential;
-	public  $projectId;
-	public  $projectColumnNames;
-	public  $crudValueArray = [];
+	public $projectTableNames;
+	public $dbCredential;
+	public $projectId;
+	public $projectColumnNames;
+	public $crudValueArray = [];
 	public $projectColumnTypes;
 
 	public function build($dbCredential, $projectId)
@@ -63,13 +63,14 @@ class CrudTemplateVariable
 			$singularTableName = Inflect::singularize($tableName);
 
 			// remove underscores
-			$capitalizedTableNameWithoutUnderscores = str_replace('_', '', ucwords($singularTableName, '_'));
-			$capitalizedTableNameWithDashes         = str_replace('_', '-', ucwords($singularTableName, '_'));
-			$unCapitalizedTableNameWithDashes       = str_replace('_', '-', ($singularTableName));
+			$capitalizedTableNameWithoutUnderscores       = str_replace('_', '', ucwords($singularTableName, '_'));
+			$capitalizedTableNameWithDashes               = str_replace('_', '-', ucwords($singularTableName, '_'));
+			$unCapitalizedTableNameWithDashes             = str_replace('_', '-', ($singularTableName));
+			$capitalizedTableNamePluralWithoutUnderscores = str_replace('_', '', ucwords($tableName, '_'));
 
 
 			//Migration Class Name
-			$migrationClassName = 'Create' . $capitalizedTableNameWithoutUnderscores . 'Table';
+			$migrationClassName = 'Create' . $capitalizedTableNamePluralWithoutUnderscores . 'Table';
 			//Migration File Name
 			$date                = Carbon::now();
 			$migrationDatePrefix = $date->format('Y_m_d_His');
@@ -85,6 +86,7 @@ class CrudTemplateVariable
 				'MigrationFileName'                              => $migrationFileName,
 				'MigrationTableName'                             => $tableName,
 				'ControllerVariableName'                         => $unCapitalizedTableNameWithoutUnderscoresPlural,
+				'ControllerVariableNameSingular'                 => $unCapitalizedTableNameWithoutUnderscores,
 				'ControllerCompactName'                          => $unCapitalizedTableNameWithoutUnderscoresPlural,
 				'ViewDisplayTableName'                           => $capitalizedTableNameWithSpacesPlural,
 				'ViewClassVariablePlural'                        => $unCapitalizedTableNameWithoutUnderscoresPlural,
