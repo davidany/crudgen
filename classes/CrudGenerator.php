@@ -59,13 +59,17 @@ class CrudGenerator
 //		die();
 		foreach ($this->crudValuesArray as $key => $value) {
 			$name = $this->crudValuesArray[$key]['ModelClassName'];
+			if (($name == 'Migration') || ($name == 'PasswordReset') || ($name == 'TelescopeEntriesTag') || ($name == 'TelescopeEntry') || ($name == 'TelescopeMonitoring')) {
+				// do nothing
 
-			if (!file_exists($this->destinationPath . 'models/')) {
-				mkdir($this->destinationPath . 'models/', 0777, true);
+			} else {
+
+				if (!file_exists($this->destinationPath . 'models/')) {
+					mkdir($this->destinationPath . 'models/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ModelClassName}}'], [$name], $this->getStub('Model'));
+				file_put_contents($this->destinationPath . "models/{$name}.php", $modelTemplate);
 			}
-			$modelTemplate = str_replace(['{{ModelClassName}}'], [$name], $this->getStub('Model'));
-			file_put_contents($this->destinationPath . "models/{$name}.php", $modelTemplate);
-
 		}
 
 	}
@@ -76,7 +80,7 @@ class CrudGenerator
 			$modelClassName                   = $this->crudValuesArray[$key]['ModelClassName'];
 			$controllerName                   = $this->crudValuesArray[$key]['ControllerName'];
 			$controllerVariableName           = $this->crudValuesArray[$key]['ControllerVariableName'];
-			$controllerVariableNameSingular           = $this->crudValuesArray[$key]['ControllerVariableNameSingular'];
+			$controllerVariableNameSingular   = $this->crudValuesArray[$key]['ControllerVariableNameSingular'];
 			$controllerCompactName            = $this->crudValuesArray[$key]['ControllerCompactName'];
 			$viewFolderName                   = $this->crudValuesArray[$key]['ViewFolderName'];
 			$unCapitalizedTableNameWithDashes = $this->crudValuesArray[$key]['unCapitalizedTableNameWithDashes'];
@@ -85,21 +89,24 @@ class CrudGenerator
 			if (!file_exists($this->destinationPath . 'controllers/')) {
 				mkdir($this->destinationPath . 'controllers/', 0777, true);
 			}
-			echo 'd';
+			echo 'controller var name d';
 			echo '<br>';
 			echo $controllerVariableName;
 			echo '<br>';
 			echo 'd';
+			if (($controllerVariableName == 'migrations') || ($controllerVariableName == 'passwordResets')) {
+				//  do nothing
+			} else {
+				$modelTemplate = str_replace(['{{ModelClassName}}'], [$modelClassName], $this->getStub('Controller'));
 
-			$modelTemplate = str_replace(['{{ModelClassName}}'], [$modelClassName], $this->getStub('Controller'));
-			$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $modelTemplate);
-			$modelTemplate = str_replace(['{{ControllerVariableName}}'], [$controllerVariableName], $modelTemplate);
-			$modelTemplate = str_replace(['{{ControllerVariableNameSingular}}'], [$controllerVariableNameSingular], $modelTemplate);
-			$modelTemplate = str_replace(['{{ControllerCompactName}}'], [$controllerCompactName], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
-			$modelTemplate = str_replace(['{{unCapitalizedTableNameWithDashes}}'], [$unCapitalizedTableNameWithDashes], $modelTemplate);
-			file_put_contents($this->destinationPath . "controllers/{$controllerName}.php", $modelTemplate);
-
+				$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $modelTemplate);
+				$modelTemplate = str_replace(['{{ControllerVariableName}}'], [$controllerVariableName], $modelTemplate);
+				$modelTemplate = str_replace(['{{ControllerVariableNameSingular}}'], [$controllerVariableNameSingular], $modelTemplate);
+				$modelTemplate = str_replace(['{{ControllerCompactName}}'], [$controllerCompactName], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
+				$modelTemplate = str_replace(['{{unCapitalizedTableNameWithDashes}}'], [$unCapitalizedTableNameWithDashes], $modelTemplate);
+				file_put_contents($this->destinationPath . "controllers/{$controllerName}.php", $modelTemplate);
+			}
 		}
 
 	}
@@ -118,16 +125,23 @@ class CrudGenerator
 			$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
 
 
-			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
-				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			echo ' this is where ' . $viewFolderName;
+			if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
+				// do nothing
+			} else {
+				if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+					mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('index'));
+				$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewIndexColumnTitleTR}}'], [$viewIndexColumnTitleTR], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewIndexColumnValueTR}}'], [$viewIndexColumnValueTR], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewClassVariablePlural}}'], [$viewClassVariablePlural], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
+				file_put_contents($this->destinationPath . "views/{$viewFolderName}/index.blade.php", $modelTemplate);
+
 			}
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('index'));
-			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewIndexColumnTitleTR}}'], [$viewIndexColumnTitleTR], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewIndexColumnValueTR}}'], [$viewIndexColumnValueTR], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewClassVariablePlural}}'], [$viewClassVariablePlural], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
-			file_put_contents($this->destinationPath . "views/{$viewFolderName}/index.blade.php", $modelTemplate);
+
 
 		}
 	}
@@ -154,15 +168,20 @@ class CrudGenerator
 			$viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
 
 
-			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
-				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
+
+			} else {
+
+
+				if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+					mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('create'));
+				$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+				$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+
+				file_put_contents($this->destinationPath . "views/{$viewFolderName}/create.blade.php", $modelTemplate);
 			}
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('create'));
-			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
-
-			file_put_contents($this->destinationPath . "views/{$viewFolderName}/create.blade.php", $modelTemplate);
-
 		}
 	}
 
@@ -190,16 +209,20 @@ class CrudGenerator
 			$viewDisplayTableName      = $this->crudValuesArray[$key]['ViewDisplayTableName'];
 			$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
 
+			if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
 
-			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
-				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+			} else {
+
+				if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+					mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('show'));
+				$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
+				$modelTemplate = str_replace(['{{ParagraphListColumns}}'], [$formBlockBuilder], $modelTemplate);
+
+				file_put_contents($this->destinationPath . "views/{$viewFolderName}/show.blade.php", $modelTemplate);
 			}
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('show'));
-			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
-			$modelTemplate = str_replace(['{{ParagraphListColumns}}'], [$formBlockBuilder], $modelTemplate);
-
-			file_put_contents($this->destinationPath . "views/{$viewFolderName}/show.blade.php", $modelTemplate);
 
 		}
 
@@ -226,18 +249,20 @@ class CrudGenerator
 
 			$viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
 			$viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+			if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
+			} else {
 
 
-			if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
-				mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+				if (!file_exists($this->destinationPath . 'views/' . $viewFolderName)) {
+					mkdir($this->destinationPath . 'views/' . $viewFolderName . '/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
+				$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+				$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
+				$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+
+				file_put_contents($this->destinationPath . "views/{$viewFolderName}/edit.blade.php", $modelTemplate);
 			}
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
-			$modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-			$modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
-			$modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
-
-			file_put_contents($this->destinationPath . "views/{$viewFolderName}/edit.blade.php", $modelTemplate);
-
 		}
 	}
 
@@ -249,16 +274,24 @@ class CrudGenerator
 			$controllerName = $this->crudValuesArray[$key]['ControllerName'];
 			$viewFolderName = $this->crudValuesArray[$key]['ViewFolderName'];
 
-			if (!file_exists($this->destinationPath . 'routes/')) {
-				mkdir($this->destinationPath . 'routes/', 0777, true);
-			}
-			$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $this->getStub('route'));
-			$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
 
-			$routeBuilder .= $modelTemplate;
-			$routeBuilder .= "\r\n";
-			$routeBuilder .= "\r\n";
-			$routeBuilder .= "\r\n";
+			echo $controllerName . ' route route <br> <br> ';
+
+			if (($controllerName == 'MigrationController') || ($controllerName == 'PasswordResetController')) {
+			} else {
+
+
+				if (!file_exists($this->destinationPath . 'routes/')) {
+					mkdir($this->destinationPath . 'routes/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $this->getStub('route'));
+				$modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
+
+				$routeBuilder .= $modelTemplate;
+				$routeBuilder .= "\r\n";
+				$routeBuilder .= "\r\n";
+				$routeBuilder .= "\r\n";
+			}
 
 		}
 		file_put_contents($this->destinationPath . "routes/web.php", $routeBuilder);
@@ -370,16 +403,20 @@ class CrudGenerator
 			$viewFolderName     = $this->crudValuesArray[$key]['ViewFolderName'];
 			$migrationFileName  = $this->crudValuesArray[$key]['MigrationFileName'];
 
-			if (!file_exists($this->destinationPath . 'migrations')) {
-				mkdir($this->destinationPath . 'migrations/', 0777, true);
+			echo ' <br> wha wha here ' . $migrationTableName;
+			if (($migrationTableName == 'migrations') || ($migrationTableName == 'password_resets')) {
+
+			} else {
+				if (!file_exists($this->destinationPath . 'migrations')) {
+					mkdir($this->destinationPath . 'migrations/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{MigrationTableList}}'], [$formBlockBuilder], $this->getStub('migration'));
+				$modelTemplate = str_replace(['{{MigrationClassName}}'], [$migrationClassName], $modelTemplate);
+				$modelTemplate = str_replace(['{{MigrationTableName}}'], [$migrationTableName], $modelTemplate);
+
+
+				file_put_contents($this->destinationPath . "migrations/{$migrationFileName}.php", $modelTemplate);
 			}
-			$modelTemplate = str_replace(['{{MigrationTableList}}'], [$formBlockBuilder], $this->getStub('migration'));
-			$modelTemplate = str_replace(['{{MigrationClassName}}'], [$migrationClassName], $modelTemplate);
-			$modelTemplate = str_replace(['{{MigrationTableName}}'], [$migrationTableName], $modelTemplate);
-
-
-			file_put_contents($this->destinationPath . "migrations/{$migrationFileName}.php", $modelTemplate);
-
 		}
 	}
 
