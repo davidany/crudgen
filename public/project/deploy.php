@@ -118,9 +118,13 @@ $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 				$crudTemplateVariable = new CrudTemplateVariable();
 				$crudTemplateVariable->build($dbCredentialRow, $projectId);
 
+
+//				print_x($crudTemplateVariable);
+//				die();
 				$generate = new CrudGenerator($crudTemplateVariable->crudValueArray);
 				$generate->getDestinationPath($projectRows->name);
-				$generate->buildModel();
+				$generate->getTables();
+				$generate->buildModel($crudTemplateVariable->singleModelNameArray);
 				$generate->buildController();
 				$generate->buildIndexView();
 				$generate->buildCreateView();

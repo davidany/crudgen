@@ -10,6 +10,7 @@ class CrudTemplateVariable
 {
 
 	public $projectTableNames;
+	public $singleModelNameArray;
 	public $dbCredential;
 	public $projectId;
 	public $projectColumnNames;
@@ -33,8 +34,10 @@ class CrudTemplateVariable
 		$stmt = $dbProject->prepare($sql);
 		$stmt->execute();
 		$this->projectTableNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
+		$this->buildSingleModelNameArray();
 
 		foreach ($this->projectTableNames as $tableKey => $tableName) {
+
 
 			$dbProject = DB::getInstance($this->dbCredential->database, $this->dbCredential->host, $this->dbCredential->username, $this->dbCredential->password);
 			$sql       = "SHOW COLUMNS  FROM $tableName";
@@ -124,10 +127,25 @@ class CrudTemplateVariable
 
 			}
 		}
-		print_x($this->projectColumnTypes);
-////		die();
-		print_x($this->projectColumnNames);
+//		print_x($this);
+//		print_x($this->projectColumnNames);
+//		print_x($this->projectColumnNames);
 	}
 
+	private function buildSingleModelNameArray()
+	{
+		foreach ($this->projectTableNames as $tableKey => $tableName) {
 
+
+			$singularTableName = Inflect::singularize($tableName);
+			echo $singularTableName;
+			echo '<br>';
+			if (!strpos($singularTableName, '_')) {
+				$this->singleModelNameArray[] = $singularTableName;
+
+			}
+		}
+//		print_x($this->singleModelNameArray);
+
+	}
 }

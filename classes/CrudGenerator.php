@@ -52,10 +52,33 @@ class CrudGenerator
 		return file_get_contents($_SERVER['DOCUMENT_ROOT'] . "/stubs/$type.stub");
 	}
 
-	public function buildModel()
+	public function getTables()
+	{
+//		echo 'eeee';
+//		print_x($this->crudValuesArray);
+//		die();
+
+		foreach ($this->crudValuesArray as $key => $value) {
+			$name = $this->crudValuesArray[$key]['ModelClassName'];
+			if (($name == 'Migration') || ($name == 'PasswordReset') || ($name == 'TelescopeEntriesTag') || ($name == 'TelescopeEntry') || ($name == 'TelescopeMonitoring')) {
+				// do nothing
+
+			} else {
+
+				if (!file_exists($this->destinationPath . 'models/')) {
+					mkdir($this->destinationPath . 'models/', 0777, true);
+				}
+				$modelTemplate = str_replace(['{{ModelClassName}}'], [$name], $this->getStub('Model'));
+				file_put_contents($this->destinationPath . "models/{$name}.php", $modelTemplate);
+			}
+		}
+
+	}
+
+	public function buildModel($singleModelNameArray)
 	{
 
-		print_x($this->crudValuesArray);
+//		print_x($this->crudValuesArray);
 //		die();
 		foreach ($this->crudValuesArray as $key => $value) {
 			$name = $this->crudValuesArray[$key]['ModelClassName'];
@@ -68,6 +91,9 @@ class CrudGenerator
 					mkdir($this->destinationPath . 'models/', 0777, true);
 				}
 				$modelTemplate = str_replace(['{{ModelClassName}}'], [$name], $this->getStub('Model'));
+
+				var_dump($modelTemplate);
+
 				file_put_contents($this->destinationPath . "models/{$name}.php", $modelTemplate);
 			}
 		}
@@ -89,11 +115,11 @@ class CrudGenerator
 			if (!file_exists($this->destinationPath . 'controllers/')) {
 				mkdir($this->destinationPath . 'controllers/', 0777, true);
 			}
-			echo 'controller var name d';
-			echo '<br>';
-			echo $controllerVariableName;
-			echo '<br>';
-			echo 'd';
+//			echo 'controller var name d';
+//			echo '<br>';
+//			echo $controllerVariableName;
+//			echo '<br>';
+//			echo 'd';
 			if (($controllerVariableName == 'migrations') || ($controllerVariableName == 'passwordResets')) {
 				//  do nothing
 			} else {
@@ -125,7 +151,7 @@ class CrudGenerator
 			$viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
 
 
-			echo ' this is where ' . $viewFolderName;
+//			echo ' this is where ' . $viewFolderName;
 			if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
 				// do nothing
 			} else {
@@ -275,7 +301,7 @@ class CrudGenerator
 			$viewFolderName = $this->crudValuesArray[$key]['ViewFolderName'];
 
 
-			echo $controllerName . ' route route <br> <br> ';
+//			echo $controllerName . ' route route <br> <br> ';
 
 			if (($controllerName == 'MigrationController') || ($controllerName == 'PasswordResetController')) {
 			} else {
@@ -320,7 +346,7 @@ class CrudGenerator
 				if ($migrationKey == 'MUL') {
 					$columnBuilder .= "unsignedInteger('$migrationTableName')";
 				} elseif ($migrationKey == 'PRI') {
-					$columnBuilder .= "increments('$migrationTableName')";
+					$columnBuilder .= "bigIncrements('$migrationTableName')";
 				} else {
 
 					$tinyIntSearch      = '/^tinyint/';
@@ -395,7 +421,7 @@ class CrudGenerator
 
 				$formBlockBuilder .= $columnBuilder;
 			}
-//			$formBlockBuilder .= '$table->timestamps();';
+			$formBlockBuilder .= '$table->timestamps();';
 
 
 			$migrationTableName = $this->crudValuesArray[$key]['MigrationTableName'];
@@ -403,9 +429,9 @@ class CrudGenerator
 			$viewFolderName     = $this->crudValuesArray[$key]['ViewFolderName'];
 			$migrationFileName  = $this->crudValuesArray[$key]['MigrationFileName'];
 
-			echo ' <br> wha wha here ' . $migrationTableName;
+//			echo ' <br> wha wha here ' . $migrationTableName;
 			if (($migrationTableName == 'migrations') || ($migrationTableName == 'password_resets')) {
-
+//				ar nam
 			} else {
 				if (!file_exists($this->destinationPath . 'migrations')) {
 					mkdir($this->destinationPath . 'migrations/', 0777, true);
