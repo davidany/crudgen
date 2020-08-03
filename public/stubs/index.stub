@@ -17,7 +17,7 @@
 
 
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">{{ViewDisplayTableName}} </div>
 
@@ -38,24 +38,34 @@
 							<tbody>
 								@if (${{ViewClassVariablePlural}})
 								   @foreach(${{ViewClassVariablePlural}} as ${{ViewClassVariableSingular}})
-								<tr>
-									{{ViewIndexColumnValueTR}}
-									<td>
-										<div class="form-group">
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/edit/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
+										<tr>
+											{{ViewIndexColumnValueTR}}
+											<td>
+												<div class="form-group">
+												<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/edit/{{${{ViewClassVariableSingular}}['id']}}">Edit</a>
 
-										 </div>
-										<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/destroy/{{${{ViewClassVariableSingular}}['id']}}">Delete</a>
-										</td>
-								</tr>
-						@endforeach
-					@endif
-					</tbody>
-				</table>
+												 </div>
+												<a class="btn btn-sm btn-info" href="/{{ViewFolderName}}/destroy/{{${{ViewClassVariableSingular}}['id']}}">Delete</a>
+												</td>
+										</tr>
+											<!--
+											these are rows with links can delete or copy to ones wanted
+											<tr>
+												{{ViewIndexColumnValueTR}}
 
+												<a href="/{{ViewFolderName}}/edit/{{${{ViewClassVariableSingular}}['id']}}"><td> {{${{ViewClassVariableSingular}}['id']}}</td></a>
+
+											</tr>
+											-->
+
+									@endforeach
+								@endif
+							</tbody>
+						</table>
+
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>
     </div>
-   @stop
+  @stop
