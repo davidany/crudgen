@@ -1,7 +1,7 @@
 <?php
 
 namespace Davidany\CodeGen;
-use \PDO;
+use PDO;
 
 class DB
 {
@@ -21,6 +21,7 @@ class DB
 		self::$instances[$db_name] = '';
 
 		echo '<br>';
+
 
 
 

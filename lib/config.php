@@ -13,10 +13,10 @@ date_default_timezone_set('America/New_York');
 //echo 'ip' .
 
 define('DB_TYPE', 'mysql');
-define('LOCALHOST', 'localhost');
+define('LOCALHOST', 'mysql');
 define('DB_NAME', 'crudgen');
-define('DB_USERNAME', 'homestead');
-define('DB_PASSWORD', 'secret');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', 'root');
 
 
 ?>
