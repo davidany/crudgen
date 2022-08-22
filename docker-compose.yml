@@ -1,0 +1,72 @@
+version: '3.9'
+services:
+  php:
+    container_name: crud-php
+    networks:
+      dominion_net:
+        ipv4_address: 29.15.58.18
+    hostname: crud
+    domainname: crud.test
+    build:
+      context: ./
+      dockerfile: docker/${DOCKER_FILE}
+    ports:
+      - "${PHP_PORT:-80}:80"
+    links:
+      - mysql
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+  mysql:
+    container_name: crud-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    image: mysql:8
+    volumes:
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - dominion_net
+    # restart: always
+    environment:
+      MYSQL_DATABASE: crud
+      MYSQL_USER: crud
+      MYSQL_PASSWORD: crud
+      MYSQL_ROOT_PASSWORD: crud
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+  phpmyadmin:
+   image: phpmyadmin/phpmyadmin
+   container_name: crud-phpmyadmin
+   networks:
+    dominion_net:
+     ipv4_address: 29.15.58.109
+   env_file:
+    - docker/phpmyadmin/phpmyadmin.env
+   networks:
+    - dominion_net
+   links:
+    - mysql:mysql
+   ports:
+     - "${PHPMYADM_PORT:-90}:80"
+   volumes:
+    - /sessions
+    - ./docker/phpmyadmin/php.ini-development:/usr/local/etc/php/php.ini-development
+    - ./docker/phpmyadmin/php.ini-production:/usr/local/etc/php/php.ini-production
+   environment:
+    MYSQL_USER: crud
+    MYSQL_PASSWORD: crud
+    MYSQL_ROOT_PASSWORD: crud
+    PMA_HOST: mysql
+volumes:
+  centosphp8-mysql:
+    driver: "local"
+  lasyearresults-mount:
+    driver: "local"
+  crud-mysql:
+    driver: "local"
+networks:
+  dominion_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "29.15.58.0/24"
+        - subnet: "2001:3984:3989::/64"

@@ -7,3 +7,5 @@ $i++;
 $cfg['Servers'][$i]['auth_type']     = 'cookie';
 // if you insist on "root" having no password:
 $cfg['Servers'][$i]['AllowNoPassword'] = true;
+
+//$cfg['Servers'][$i]['auth_type'] = 'http';

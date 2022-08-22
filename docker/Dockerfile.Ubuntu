@@ -1,0 +1,110 @@
+FROM php:8.0-apache
+ENV ACCEPT_EULA=Y
+
+RUN apt-get update && apt-get install -qqy git unzip libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    libaio1 wget && apt-get clean autoclean && apt-get autoremove --yes && \
+    rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+RUN a2enmod rewrite
+RUN a2enmod ssl
+RUN a2enmod headers
+
+# required for excel handling
+RUN docker-php-ext-install gd && docker-php-ext-install zip
+
+#composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Beanstalk
+RUN apt-get install -qqy beanstalkd
+RUN echo ' START=yes ' >> /etc/default/beanstalkd
+
+# Add support for HL7
+# RUN docker-php-ext-install sockets
+
+# ORACLE oci
+RUN mkdir /opt/oracle \
+    && cd /opt/oracle
+
+ADD https://download.oracle.com/otn_software/linux/instantclient/199000/instantclient-basic-linux.x64-19.9.0.0.0dbru.zip /opt/oracle
+ADD https://download.oracle.com/otn_software/linux/instantclient/199000/instantclient-sdk-linux.x64-19.9.0.0.0dbru.zip /opt/oracle
+
+# Install Oracle Instantclient
+RUN  unzip /opt/oracle/instantclient-basic-linux.x64-19.9.0.0.0dbru.zip -d /opt/oracle \
+    && unzip /opt/oracle/instantclient-sdk-linux.x64-19.9.0.0.0dbru.zip -d /opt/oracle \
+    && ln -s /opt/oracle/instantclient_19_9/libclntshcore.so.19.9 /opt/oracle/instantclient_19_9/libclntshcore.so \
+    && rm -rf /opt/oracle/*.zip
+
+ENV LD_LIBRARY_PATH  /opt/oracle/instantclient_19_9:${LD_LIBRARY_PATH}
+
+# Install Oracle extensions
+RUN echo 'instantclient,/opt/oracle/instantclient_19_9/' | pecl install oci8-3.0.1 \
+    && docker-php-ext-enable \
+    oci8 \
+    && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/oracle/instantclient_19_9,19.9 \
+    && docker-php-ext-install \
+    pdo_oci
+
+RUN docker-php-ext-install pdo_mysql
+
+# Add MS SQL support
+RUN apt-get install -qqy gnupg2
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/10/prod.list \
+    > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update \
+    && apt-get install -qqy --no-install-recommends \
+    locales \
+    apt-transport-https \
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    && locale-gen \
+
+    RUN apt-get install -qqy \
+    unixodbc-dev \
+    unixodbc \
+    wget \
+    libcurl4 \
+    openssl \
+    libssl-dev \
+    msodbcsql17
+
+RUN mv /etc/apt/sources.list.d/mssql-release.list ~/ \
+    &&  apt-get update \
+    && apt-get install -y unixodbc \
+    &&  mv ~/mssql-release.list /etc/apt/sources.list.d/ \
+    && apt-get update \
+    && apt-get install -y mssql-tools \
+    && echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc \
+    && /bin/bash -c "source ~/.bashrc"
+
+WORKDIR "/downloads"
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/g/glibc/multiarch-support_2.27-3ubuntu1.4_amd64.deb
+RUN apt-get update \
+    &&  apt-get install -y ./multiarch-support_2.27-3ubuntu1.4_amd64.deb \
+    unixodbc-dev
+
+RUN pecl install sqlsrv-5.9.0
+RUN pecl install pdo_sqlsrv-5.9.0
+
+#RUN pear config-set php_ini /usr/local/etc/php/php.ini
+
+RUN  pecl install xdebug-3.0.0 \
+	&& docker-php-ext-enable xdebug
+
+COPY docker/php/php.ini /usr/local/etc/php/
+
+WORKDIR "/var/www/html"
+
+RUN sed -E -i -e 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/public/' /etc/apache2/sites-available/000-default.conf
+
+RUN echo 'alias vi="vim"' >> /root/.bash_profile
+RUN echo 'alias ll="ls -la"' >> /root/.bash_profile
+RUN echo 'alias cdp="cd /var/www/html"' >> /root/.bash_profile
+# RUN source /root/.bash_profile
+
+EXPOSE 80
+EXPOSE 443

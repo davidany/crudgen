@@ -2,7 +2,7 @@
   "name": "davidany/crudgen",
   "require": {
     "filp/whoops": "^2.1",
-    "vlucas/phpdotenv": "^2.4",
+    "vlucas/phpdotenv": "^5.4",
     "nesbot/carbon": "^2.0",
     "sebastiaanluca/php-stub-generator": "^0.1.1"
   },

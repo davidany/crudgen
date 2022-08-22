@@ -13,7 +13,7 @@ class DB
 	{
 	}
 
-	public static function getInstance($db_name = DB_NAME, $db_host = LOCALHOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
+	public static function getInstance($db_name = DB_NAME, $db_host = DB_HOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
 	{
 		//		echo $db_name . ' ' . $db_host;
 
@@ -22,11 +22,24 @@ class DB
 
 		echo '<br>';
 
+//$hostName = LOCALHOST;
+//$dbName = DB_NAME;
+//$userName = DB_USERNAME;
+//$password = DB_PASSWORD;
+//try {
+//    $pdo = new PDO("mysql:host=$hostName;dbname=$dbName",$userName,$password);
+//    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//    echo "Connected successfully";
+//    }
+//    catch(PDOException $e)
+//    {
+//     echo "Connection failed: " . $e->getMessage();
+//    }
 
 
 
 		if (!self::$instances[$db_name]) {
-			self::$instances[$db_name] = new PDO("" . DB_TYPE . ":host=" . $db_host . ";dbname=" . $db_name . "", $db_user, $db_pass);
+			self::$instances[$db_name] = new PDO( DB_TYPE . ":host=" . $db_host . ";dbname=" . $db_name . "", $db_user, $db_pass);
 			self::$instances[$db_name]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		}
