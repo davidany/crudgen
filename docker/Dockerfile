@@ -62,6 +62,9 @@ RUN echo ' xdebug.dump.GET=*  '  >> /etc/php.ini
 RUN echo ' xdebug.dump.POST=*  '  >> /etc/php.ini
 RUN echo ' xdebug.max_stack_frames=-1  '  >> /etc/php.ini
 RUN echo ' xdebug.show_exception_trace=0 '  >> /etc/php.ini
+RUN echo ' xdebug.show_exception_trace=0 '  >> /etc/php.ini
+RUN echo ' mysql.default_socket = /var/run/mysqld/mysqld.sock '  >> /etc/php.ini
+RUN echo ' mysqli.default_socket = /var/run/mysqld/mysqld.sock '  >> /etc/php.ini
 
 
 RUN echo 'alias vi="vim"' >> /root/.bashrc

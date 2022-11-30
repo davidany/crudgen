@@ -40,8 +40,8 @@ CREATE TABLE `db_credential` (
 
 INSERT INTO `db_credential` (`id`, `host`, `database`, `username`, `password`, `project_id`) VALUES
 (1, 'localhost', 'crudgen', 'homestead', 'secret', 1),
-(2, 'localhost', 'larabid', 'homestead', 'secret', 4),
-(3, 'localhost', 'ticketbeast', 'homestead', 'secret', 5);
+(2, 'localhost', 'larabid', 'homestead', 'secret', 2),
+(3, 'localhost', 'ticketbeast', 'homestead', 'secret', 3);
 
 -- --------------------------------------------------------
 
@@ -62,8 +62,7 @@ CREATE TABLE `project` (
 INSERT INTO `project` (`id`, `name`, `directory`) VALUES
 (1, 'crudgen', 'crudgen'),
 (2, 'larabid', 'larabid'),
-(3, 'ticketbeast', 'ticketbeast'),
-(4, 'test', 'test');
+(3, 'ticketbeast', 'ticketbeast');
 
 -- --------------------------------------------------------
 
