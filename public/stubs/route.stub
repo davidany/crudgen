@@ -1,4 +1,3 @@
-<?php
 
 Route::get('{{ViewFolderName}}/index', [App\Http\Controllers\{{ControllerName}}::class, 'index'])->name('{{ViewFolderName}}.index');
 Route::get('{{ViewFolderName}}/create', [App\Http\Controllers\{{ControllerName}}::class, 'create'])->name('{{ViewFolderName}}.create');

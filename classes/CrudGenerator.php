@@ -15,7 +15,7 @@ class CrudGenerator
     public function __construct($crudValuesArray)
     {
         $this->crudValuesArray = $crudValuesArray;
-		print_x($this->crudValuesArray);
+        print_x($this->crudValuesArray);
     }
 
     public function getDestinationPath($projectName)
@@ -67,7 +67,6 @@ class CrudGenerator
 
     public function buildModel($singleModelNameArray)
     {
-
         foreach ($this->crudValuesArray as $key => $value) {
             $name = $this->crudValuesArray[$key]['ModelClassName'];
             if (($name == 'Migration') || ($name == 'PasswordReset') || ($name == 'TelescopeEntriesTag') || ($name == 'TelescopeEntry') || ($name == 'TelescopeMonitoring')) {
@@ -270,8 +269,8 @@ class CrudGenerator
                 $routeBuilder .= "\r\n";
                 $routeBuilder .= "\r\n";
             }
+            file_put_contents($this->destinationPath."routes/web.php", $routeBuilder);
         }
-        file_put_contents($this->destinationPath."routes/web.php", $routeBuilder);
     }
 
     public function buildMigration()
