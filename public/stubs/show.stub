@@ -1,4 +1,4 @@
-@extends('base')
+@extends('layouts.app')
 
 @section('content')
         <form method="post"  class="form-horizontal" action="/{{ViewFolderName}}/store">

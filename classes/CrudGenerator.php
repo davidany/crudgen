@@ -296,6 +296,8 @@ class CrudGenerator
                     $columnBuilder .= "bigIncrements('$migrationTableName')";
                 } else {
                     $tinyIntSearch      = '/^tinyint/';
+                    $smallIntSearch     = '/^smallint/';
+                    $bitSearch          = '/^bit/';
                     $intSearch          = '/^int/';
                     $decimalSearch      = '/^decimal/';
                     $decimalInnerSearch = '/\d*\,\d*/';
@@ -309,6 +311,12 @@ class CrudGenerator
 
                     if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
                         $columnBuilder .= "tinyInteger('$migrationTableName')";
+                    }
+                    if (preg_match($smallIntSearch, $migrationTableType, $match)) {
+                        $columnBuilder .= "smallInteger('$migrationTableName')";
+                    }
+                    if (preg_match($bitSearch, $migrationTableType, $match)) {
+                        $columnBuilder .= "smallInteger('$migrationTableName')";
                     }
                     if (preg_match($intSearch, $migrationTableType, $match)) {
                         $columnBuilder .= "integer('$migrationTableName')";
