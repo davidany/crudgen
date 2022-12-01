@@ -112,7 +112,7 @@ ENV HTTPD_MAIN_CONF_PATH=/etc/httpd/conf \
 RUN mkdir -p /etc/httpd/sites-enabled
 RUN mkdir -p /etc/httpd/sites-available
 
-RUN chown -R apache:apache /var/www/html
+RUN chown -R root:root /var/www/html
 
 COPY docker/httpd.conf /etc/httpd/conf/httpd.conf
 COPY docker/apache.conf /etc/httpd/sites-enabled/000-default.conf
