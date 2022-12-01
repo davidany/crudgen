@@ -39,13 +39,18 @@ RUN echo extension=sqlsrv.so >> `php --ini | grep "Scan for additional .ini file
 RUN touch /var/log/xdebug.log
 RUN /bin/bash -c "mkdir -p /var/log/php"
 RUN touch /var/log/php/mono.log
+RUN touch /var/log/php/error.log
 RUN chmod -R +rwX  /var/log/
 RUN chown -R apache:apache /var/log/
 RUN chown -R apache:apache /var/www/html
 
-RUN echo ' xdebug.mode=develop,coverage,debug '  >> /etc/php.ini
+RUN echo ' log_errors = on '  >> /etc/php.ini
+RUN echo ' error_log = /var/log/php/error.log '  >> /etc/php.ini
+RUN echo ' xdebug.mode=develop,coverage,debug,profile '  >> /etc/php.ini
+RUN echo ' xdebug.idekey=docker '  >> /etc/php.ini
 RUN echo ' xdebug.discover_client_host=true '  >> /etc/php.ini
 RUN echo ' xdebug.log=/var/log/xdebug.log '  >> /etc/php.ini
+RUN echo ' xdebug.log_level=10 '  >> /etc/php.ini
 RUN echo ' xdebug.client_host=host.docker.internal '  >> /etc/php.ini
 RUN echo ' xdebug.client_port=9003 '  >> /etc/php.ini
 RUN echo ' xdebug.start_with_request=yes '  >> /etc/php.ini
@@ -70,11 +75,21 @@ RUN echo ' mysqli.default_socket = /var/run/mysqld/mysqld.sock '  >> /etc/php.in
 RUN echo 'alias vi="vim"' >> /root/.bashrc
 RUN echo 'alias ll="ls -la"' >> /root/.bashrc
 RUN echo 'alias cdp="cd /var/www/html"' >> /root/.bashrc
+RUN echo 'alias cdl="cd /var/log"' >> /root/.bashrc
 RUN echo 'alias pbcopy="xclip -selection clipboard"' >> /root/.bashrc
 RUN echo 'alias pbpaste="xclip -selection clipboard -o"' >> /root/.bashrc
 RUN echo 'alias phpinfo="echo  \"<?php phpinfo(); \" | php "' >> /root/.bashrc
+RUN echo 'alias reload="source ~/.bashrc"' >> /root/.bashrc
+RUN echo 'alias dump="composer dumpautoload"' >> /root/.bashrc
+RUN echo 'alias gs="git status"' >> /root/.bashrc
+RUN echo 'alias gst="git status"' >> /root/.bashrc
+RUN echo 'alias las="ls -latr"' >> /root/.bashrc
 
 RUN yum install -y supervisor beanstalkd iproute xclip zsh net-tools
+
+#added systemctl alternative
+RUN wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl
+RUN chmod 755 /usr/local/bin/systemctl
 
 # Update Apache Configuration
 ENV HTTPD_MAIN_CONF_PATH=/etc/httpd/conf \
@@ -112,22 +127,18 @@ RUN chmod +x /usr/local/bin/start-container
 EXPOSE 80
 EXPOSE 92
 EXPOSE 443
-#COPY . /var/www/html
 
 
-#proxy work
-# COPY docker/mod_proxy_hcheck.c  /
-# COPY docker/http_ssl.h  /
-# RUN wget https://raw.githubusercontent.com/unbit/uwsgi/2.0.14/apache2/mod_proxy_uwsgi.c
-# RUN wget https://raw.githubusercontent.com/unbit/uwsgi/2.0.14/apache2/mod_proxy_hcheck.c
-
-
-# RUN apxs -i -a -c mod_proxy_uwsgi.c
-# RUN apxs -i -a -c mod_proxy_hcheck.c
-
-# CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
-# CMD ["/usr/bin/supervisord"]
-# CMD ["/usr/bin/supervisord","-n"]
+#ssh
+RUN yum install -y openssh openssh-server openssh-clients
+# Generate keys
+RUN ssh-keygen -q -N "" -t rsa -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -q -N "" -t rsa -f /root/.ssh/id_rsa
+RUN cp /root/.ssh/id_rsa.pub /root/.ssh/authorized_keys
+RUN echo 'root:assay'|chpasswd
+RUN useradd dominion
+RUN echo 'dominion:assay'|chpasswd
+EXPOSE      22
 
 
 CMD ["/bin/bash","start-container"]

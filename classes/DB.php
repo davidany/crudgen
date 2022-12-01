@@ -1,63 +1,45 @@
 <?php
 
 namespace Davidany\CodeGen;
+
 use PDO;
 
 class DB
 {
-	private static $instance  = null;
-	private static $instances = array();
+    protected static $instance;
 
+    protected function __construct($db_name = DB_NAME, $db_host = DB_HOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
+    {
+        try {
+            self::$instance = new PDO("mysql:host={$db_host};dbname={$db_name}", $db_user, $db_pass);
+            self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+        } catch (PDOException $error) {
+            echo $error->getMessage();
+        }
 
-	private function __construct()
-	{
-	}
+    }
 
-	public static function getInstance($db_name = DB_NAME, $db_host = DB_HOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
-	{
-		//		echo $db_name . ' ' . $db_host;
+    public static function getInstance($db_name = DB_NAME, $db_host = DB_HOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
+    {
+        if (empty(self::$instance)) {
+            try {
+                new DB();
+                //var_dump(self::$instance);
+            } catch (PDOException $error) {
+                echo $error->getMessage();
+            }
+        }
 
-		//		if($db_name == DB_NAME){
-		self::$instances[$db_name] = '';
+        return self::$instance;
+            }
 
-		echo '<br>';
+    private function __clone()
+    {
+        // Stopping Clonning of Object
+        }
 
-//$hostName = LOCALHOST;
-//$dbName = DB_NAME;
-//$userName = DB_USERNAME;
-//$password = DB_PASSWORD;
-//try {
-//    $pdo = new PDO("mysql:host=$hostName;dbname=$dbName",$userName,$password);
-//    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//    echo "Connected successfully";
-//    }
-//    catch(PDOException $e)
-//    {
-//     echo "Connection failed: " . $e->getMessage();
-//    }
-
-
-
-		if (!self::$instances[$db_name]) {
-			self::$instances[$db_name] = new PDO( DB_TYPE . ":host=" . $db_host . ";dbname=" . $db_name . "", $db_user, $db_pass);
-			self::$instances[$db_name]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-		}
-
-		return self::$instances[$db_name];
-		////		}else{
-		//
-		//			if (!self::$instance) {
-		//				self::$instance = new PDO("" . DB_TYPE . ":host=" . $db_host . ";dbname=" . $db_name . "", $db_user, $db_pass);
-		//				self::$instance->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		//			}
-		//			return self::$instance;
-
-
-	}
-
-
-	private function __clone()
-	{
-	}
+    private function __wakeup()
+    {
+        // Stopping unserialize of object
+    }
 }
