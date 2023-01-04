@@ -15,7 +15,7 @@ class CrudGenerator
     public function __construct($crudValuesArray)
     {
         $this->crudValuesArray = $crudValuesArray;
-        print_x($this->crudValuesArray);
+//        print_x($this->crudValuesArray);
     }
 
     public function getDestinationPath($projectName)
@@ -280,97 +280,127 @@ class CrudGenerator
 
             foreach ($value['Columns'] as $innerKey => $innerValue) {
                 $migrationTableName = $innerValue['ColumnName'];
-                $migrationTableType = $innerValue['ColumnType'];
-                $migrationNull      = $innerValue['Null'];
-                $migrationKey       = $innerValue['Key'];
-                $migrationDefault   = $innerValue['Default'];
-                $migrationExtra     = $innerValue['Extra'];
+                if ($migrationTableName != 'id') {
+                    $migrationTableType = $innerValue['ColumnType'];
+                    $migrationNull      = $innerValue['Null'];
+                    $migrationKey       = $innerValue['Key'];
+                    $migrationDefault   = $innerValue['Default'];
+                    $migrationExtra     = $innerValue['Extra'];
 
-                $columnBuilder = '$table->';
+                    $columnBuilder = '$table->';
 
 
-                if ($migrationKey == 'MUL') {
-                    $columnBuilder .= "unsignedInteger('$migrationTableName')";
-                } elseif ($migrationKey == 'PRI') {
-                    $columnBuilder .= "bigIncrements('$migrationTableName')";
-                } else {
-                    $tinyIntSearch      = '/^tinyint/';
-                    $smallIntSearch     = '/^smallint/';
-                    $bitSearch          = '/^bit/';
-                    $intSearch          = '/^int/';
-                    $decimalSearch      = '/^decimal/';
-                    $decimalInnerSearch = '/\d*\,\d*/';
-                    $timestampSearch    = '/^timestamp/';
-                    $datetimeSearch     = '/^datetime/';
-                    $varSearch          = '/^varchar/';
-                    $varInnerSearch     = '/\d+/';
-                    $charSearch         = '/^char/';
-                    $textSearch         = '/^text/';
-                    $enumSearch         = '/^enum/';
+                    if ($migrationKey == 'MUL') {
+                        $columnBuilder .= "unsignedInteger('$migrationTableName')";
+                    } elseif (($migrationKey == 'PRI') && ($migrationTableType == 'INT')) {
+                        $columnBuilder .= "bigIncrements('$migrationTableName')";
+                    } elseif (($migrationKey == 'PRI') && ($migrationTableType == 'bigint')) {
+                        $columnBuilder .= "bigIncrements('$migrationTableName')";
+                    } else {
+                        $tinyIntSearch      = '/^tinyint/';
+                        $bigIntSearch       = '/^bigint/';
+                        $smallIntSearch     = '/^smallint/';
+                        $bitSearch          = '/^bit/';
+                        $intSearch          = '/^int/';
+                        $decimalSearch      = '/^decimal/';
+                        $decimalInnerSearch = '/\d*\,\d*/';
+                        $timestampSearch    = '/^timestamp/';
+                        $datetimeSearch     = '/^datetime/';
+                        $dateSearch         = '/^date/';
+                        $varSearch          = '/^varchar/';
+                        $varInnerSearch     = '/\d+/';
+                        $charSearch         = '/^char/';
+                        $textSearch         = '/^text/';
+                        $enumSearch         = '/^enum/';
 
-                    if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "tinyInteger('$migrationTableName')";
-                    }
-                    if (preg_match($smallIntSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "smallInteger('$migrationTableName')";
-                    }
-                    if (preg_match($bitSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "smallInteger('$migrationTableName')";
-                    }
-                    if (preg_match($intSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "integer('$migrationTableName')";
-                    }
-                    if (preg_match($timestampSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "timestamp('$migrationTableName')";
-                    }
-                    if (preg_match($datetimeSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "dateTime('$migrationTableName')";
-                    }
-                    if (preg_match($textSearch, $migrationTableType, $match)) {
-                        $columnBuilder .= "text('$migrationTableName')";
-                    }
-                    if (preg_match($enumSearch, $migrationTableType, $match)) {
-                        if (preg_match('!\(([^\)]+)\)!', $migrationTableType, $enumValues)) {
-                            $enumValueText = $enumValues[1];
+                        if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "tinyInteger('$migrationTableName')";
                         }
-                        $enumValueArray = explode(',', $enumValueText);
-                        $columnBuilder  .= "enum('$migrationTableName',[";
-                        foreach ($enumValueArray as $value) {
-                            $columnBuilder .= $value.',';
+                        if (preg_match($bigIntSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "bigInteger('$migrationTableName')";
                         }
-                        $columnBuilder = rtrim($columnBuilder, ',');
-                        $columnBuilder .= '])';
-                    }
+                        if (preg_match($smallIntSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "smallInteger('$migrationTableName')";
+                        }
+                        if (preg_match($bitSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "smallInteger('$migrationTableName')";
+                        }
+                        if (preg_match($intSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "integer('$migrationTableName')";
+                        }
+                        if (preg_match($timestampSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "timestamp('$migrationTableName')";
+                        }
+                        if (preg_match($datetimeSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "dateTime('$migrationTableName')";
+                        }
+                        if (preg_match($dateSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "date('$migrationTableName')";
+                        }
+                        if (preg_match($textSearch, $migrationTableType, $match)) {
+                            $columnBuilder .= "text('$migrationTableName')";
+                        }
+                        if (preg_match($enumSearch, $migrationTableType, $match)) {
+                            if (preg_match('!\(([^\)]+)\)!', $migrationTableType, $enumValues)) {
+                                $enumValueText = $enumValues[1];
+                            }
+                            $enumValueArray = explode(',', $enumValueText);
+                            $columnBuilder  .= "enum('$migrationTableName',[";
+                            foreach ($enumValueArray as $value) {
+                                $columnBuilder .= $value.',';
+                            }
+                            $columnBuilder = rtrim($columnBuilder, ',');
+                            $columnBuilder .= '])';
+                        }
 
-                    if (preg_match($decimalSearch, $migrationTableType, $match)) {
-                        preg_match($decimalInnerSearch, $migrationTableType, $matches);
-                        $deciNum       = explode(',', $matches[0]);
-                        $columnBuilder .= "decimal('$migrationTableName',$deciNum[0],$deciNum[1])";
+                        if (preg_match($decimalSearch, $migrationTableType, $match)) {
+                            preg_match($decimalInnerSearch, $migrationTableType, $matches);
+                            $deciNum       = explode(',', $matches[0]);
+                            $columnBuilder .= "decimal('$migrationTableName',$deciNum[0],$deciNum[1])";
+                        }
+                        if (preg_match($varSearch, $migrationTableType, $match)) {
+                            preg_match($varInnerSearch, $migrationTableType, $matches);
+                            if ($matches[0] > 500) {
+                                $columnBuilder .= "string('$migrationTableName',500)";
+                            } else {
+                                $columnBuilder .= "string('$migrationTableName',$matches[0])";
+                            }
+                            var_dump($columnBuilder);
+                        }
+                        if (preg_match($charSearch, $migrationTableType, $match)) {
+                            preg_match($varInnerSearch, $migrationTableType, $matches);
+                            $columnBuilder .= "char('$migrationTableName',$matches[0])";
+                        }
                     }
-                    if (preg_match($varSearch, $migrationTableType, $match)) {
-                        preg_match($varInnerSearch, $migrationTableType, $matches);
-                        $columnBuilder .= "string('$migrationTableName',$matches[0])";
-                    }
-                    if (preg_match($charSearch, $migrationTableType, $match)) {
-                        preg_match($varInnerSearch, $migrationTableType, $matches);
-                        $columnBuilder .= "char('$migrationTableName',$matches[0])";
-                    }
-                }
 //				if ($migrationTableType == )
-                if ($migrationDefault != '') {
-                    $columnBuilder .= "->default($migrationDefault)";
-                }
-                if ($migrationNull == 'YES') {
-                    $columnBuilder .= '->nullable()';
-                }
+                    if ($migrationDefault != '') {
+                        if ($migrationDefault == 'CURRENT_TIMESTAMP') {
+                            $columnBuilder .= "->useCurrent()";
+                        } else {
+                            if (preg_match($bitSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "->default(0)";
+                            } elseif (is_string($migrationClassName)) {
+                                $columnBuilder .= "->default('$migrationDefault')";
+                            } else {
+                                $columnBuilder .= "->default($migrationDefault)";
+                            }
+                        }
+                    }
 
-                $columnBuilder .= ';';
+                    if ($migrationNull == 'YES') {
+                        $columnBuilder .= '->nullable()';
+                    }
+
+                    $columnBuilder .= ';';
 
 //				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
 //				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
 //				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
 
-                $formBlockBuilder .= $columnBuilder;
+                    $formBlockBuilder .= $columnBuilder;
+                } else {
+                    $formBlockBuilder .= '$table->id();';
+                }
             }
             $formBlockBuilder .= '$table->timestamps();';
 
@@ -396,6 +426,4 @@ class CrudGenerator
             }
         }
     }
-
-
 }
