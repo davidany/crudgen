@@ -25,3 +25,5 @@ docker/config/db2/drivers
 docker/config/db2/ibm_data_server_driver_package_linuxx64_v10.5.tar.gz
 docker/config/php/php-5.6.15.tar.gz
 docker/mssql
+docker/config/ssl/crud-dd-test.key
+docker/config/ssl/crud-dd-test.crt
