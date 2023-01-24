@@ -7,6 +7,7 @@ ini_set('display_errors', 1);
 //
 include($_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php');
 
+
 $projectId    = $_GET['id'];
 $dbCredential = new DbCredential();
 $dbCredential->store($projectId, '../project/deploy.php?id=' . $projectId);

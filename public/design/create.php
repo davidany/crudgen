@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 //
 include($_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php');
+
 if(isset($_GET['id'])){
 $projectId    = $_GET['id'];
 $dbCredential = new DbCredential();

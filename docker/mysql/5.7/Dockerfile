@@ -1,3 +1,17 @@
+# Copyright (c) 2017, 2021, Oracle and/or its affiliates.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 FROM oraclelinux:7-slim
 
 
@@ -94,13 +108,13 @@ RUN sed -i 's/^log-error=/#&/' /etc/my.cnf
 RUN echo 'sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' >> /etc/my.cnf
 RUN yum -y install coreutils
 
-COPY docker/mysql/5.7/prepare-image.sh /
+COPY prepare-image.sh /
 RUN /prepare-image.sh
 
 ENV MYSQL_UNIX_PORT /var/lib/mysql/mysql.sock
 
-COPY docker/mysql/5.7/docker-entrypoint.sh /entrypoint.sh
-COPY docker/mysql/5.7/healthcheck.sh /healthcheck.sh
+COPY docker-entrypoint.sh /entrypoint.sh
+COPY healthcheck.sh /healthcheck.sh
 ENTRYPOINT ["/entrypoint.sh"]
 HEALTHCHECK CMD /healthcheck.sh
 EXPOSE 3306 33060
