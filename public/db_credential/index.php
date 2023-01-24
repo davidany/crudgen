@@ -7,7 +7,6 @@ ini_set('display_errors', 1);
 //
 include($_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php');
 
-
 $project = new Project();
 $result  = $project->index();
 

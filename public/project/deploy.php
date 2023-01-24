@@ -11,7 +11,6 @@ ini_set('display_errors', 1);
 
 
 include($_SERVER['DOCUMENT_ROOT'] . '/../vendor/autoload.php');
-
 $projectId   = $_GET['id'];
 $project     = new Project();
 $projectRows = $project->edit($projectId);

@@ -3,7 +3,8 @@
 //ini_set('display_errors', 1);
 //
 
-
+echo 'this is not in public folder';
+die('dsd');
 //
 //// match for the routes
 $match = $router->match();
