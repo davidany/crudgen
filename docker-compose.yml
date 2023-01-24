@@ -87,6 +87,22 @@ services:
       MYSQL_PASSWORD: connect
       MYSQL_ROOT_PASSWORD: connect
       PMA_HOST: mysql
+  proxy:
+    container_name: '${CONTAINER_NAME_PROXY:-crud-proxy}'
+    image: nginx
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile.Nginx
+    networks:
+      - dominion_net
+    ports:
+      - 80:80
+      - 443:443
+      # - 8080:8080
+    volumes:
+      - ./docker/config/proxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/config/ssl/crud-dd-test.crt:/etc/nginx/crud-dd-test.crt
+      - ./docker/config/ssl/crud-dd-test.key:/etc/nginx/crud-dd-test.key
 volumes:
   mysql:
     driver: "local"
