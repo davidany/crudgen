@@ -66,14 +66,11 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: '${CONTAINER_NAME_PHPMYADMIN:-crud-phpmyadmin}'
-    container_name: crud-phpmyadmin
     networks:
       dominion_net:
         ipv4_address: ${DOCKER_IP_ADDRESS_PHPMYADMIN}
     env_file:
       - docker/phpmyadmin/phpmyadmin.env
-    networks:
-      - dominion_net
     links:
       - mysql:mysql
     ports:
