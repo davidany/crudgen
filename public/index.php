@@ -1,5 +1,9 @@
 <?php
 
+use Pecee\SimpleRouter\SimpleRouter;
+
+
+
 require __DIR__.'/../vendor/autoload.php';
 
 
@@ -8,28 +12,15 @@ ini_set('display_errors', 1);
 
 
 
-?>
+/* Load external routes file */
+require_once '../routes.php';
 
+/**
+ * The default namespace for route-callbacks, so we don't have to specify it each time.
+ * Can be overwritten by using the namespace config option on your routes.
+ */
 
-<!doctype html>
-<html lang = "en">
-<head>
-	<meta charset = "UTF-8">
-	<meta name = "viewport" content = "width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-	<meta http-equiv = "X-UA-Compatible" content = "ie=edge">
-	<title>FORM FOR Databases</title>
-	<?php require_once('head.php'); ?>
+SimpleRouter::setDefaultNamespace('\Davidany\CodeGen');
 
-	<script src = "assets/scripts/app.js"></script>
-
-</head>
-<body><?php require_once('nav.php'); ?>
-
-<div class = "container">
-	<div class = "row">
-
-	</div>
-</div>
-
-</body>
-</html>
+// Start the routing
+SimpleRouter::start();

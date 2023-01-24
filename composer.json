@@ -4,7 +4,8 @@
     "filp/whoops": "^2.1",
     "vlucas/phpdotenv": "^5.4",
     "nesbot/carbon": "^2.0",
-    "sebastiaanluca/php-stub-generator": "*"
+    "sebastiaanluca/php-stub-generator": "^0.1.1",
+    "pecee/simple-router": "4.3.7.2"
   },
   "authors": [
     {

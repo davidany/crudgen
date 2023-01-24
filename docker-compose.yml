@@ -88,10 +88,11 @@ services:
     container_name: '${CONTAINER_NAME_PROXY:-crud-proxy}'
     image: nginx
     build:
-      context: ./
       dockerfile: docker/Dockerfile.Nginx
     networks:
       - dominion_net
+    links:
+      - php
     ports:
       - 80:80
       - 443:443
