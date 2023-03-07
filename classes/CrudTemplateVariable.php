@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Davidany\CodeGen;
+namespace Davidany\Codegen;
 
 use Carbon\Carbon;
 use PDO;
@@ -22,36 +21,24 @@ class CrudTemplateVariable
         $this->dbCredential = $dbCredential;
         $this->projectId    = $projectId;
         $this->getTablesAndColumns();
-//		print_x($this->crudValueArray);
     }
 
     public function getTablesAndColumns()
     {
-        $dbProject = DB::getInstance($this->dbCredential->database, $this->dbCredential->host, $this->dbCredential->username, $this->dbCredential->password);
-//		die();
-        $sql  = "SHOW TABLES FROM {$this->dbCredential->database}";
-        $stmt = $dbProject->prepare($sql);
-        $stmt->execute();
-        $this->projectTableNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        // Create a new PDO object
+        $dbProject               = DB::getInstance($this->dbCredential->database, $this->dbCredential->host, $this->dbCredential->username, $this->dbCredential->password);
+        $this->projectTableNames = $dbProject->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
         $this->buildSingleModelNameArray();
 
         foreach ($this->projectTableNames as $tableKey => $tableName) {
-            $fullTableName = $this->dbCredential->database . "." . $tableName;
-            $dbProject = DB::getInstance($this->dbCredential->database, $this->dbCredential->host, $this->dbCredential->username, $this->dbCredential->password);
-//            $sql       = "SELECT * FROM {$this->dbCredential->database}.{$tableName}";
-			$sql       = "SHOW COLUMNS  FROM $fullTableName";
-            $stmt = $dbProject->prepare($sql);
-            $stmt->execute();
-            $this->projectColumnNames = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-
+            $fullTableName = $this->dbCredential->database.".".$tableName;
             $dbProject = DB::getInstance($this->dbCredential->database, $this->dbCredential->host, $this->dbCredential->username, $this->dbCredential->password);
             $sql       = "SHOW COLUMNS  FROM $fullTableName";
             $stmt      = $dbProject->prepare($sql);
             $stmt->execute();
+            $this->projectColumnNames = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             $this->projectColumnTypes = $stmt->fetchAll(PDO::FETCH_CLASS);
-
 
             $capitalizedTableNameWithoutUnderscoresPlural   = str_replace('_', '', ucwords($tableName, '_'));
             $capitalizedTableNameWithSpacesPlural           = str_replace('_', ' ', ucwords($tableName, '_'));
@@ -105,19 +92,21 @@ class CrudTemplateVariable
                 'ViewIndexColumnValueTR'                         => ''
             ];
 
-//			var_dump($this->projectColumnTypes[$tableKey]);
-            foreach ($this->projectColumnNames as $columnKey => $columnName) {
+
+            foreach ($this->projectColumnNames as $columnKey => $columnArray) {
+                $columnName                                                                  = $columnArray['Field'];
                 $displayColumnName                                                           = str_replace('_', ' ', ucwords($columnName, '_'));
                 $this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnName']        = $columnName;
                 $this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnDisplayName'] = $displayColumnName;
-                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnType']        = $this->projectColumnTypes[$columnKey]->Type;
-                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Null']              = $this->projectColumnTypes[$columnKey]->Null;
-                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Key']               = $this->projectColumnTypes[$columnKey]->Key;
-                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Default']           = $this->projectColumnTypes[$columnKey]->Default;
-                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Extra']             = $this->projectColumnTypes[$columnKey]->Extra;
-                $displayColumnName                                                           = str_replace('_', ' ', ucwords($columnName, '_'));
-                $this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR']                   .= '<td scope="col">'.$displayColumnName.'</td>';
-                $this->crudValueArray[$tableKey]['ViewIndexColumnValueTR']                   .= '<td>{{$'.$unCapitalizedTableNameWithoutUnderscores.'["'.$columnName.'"]}}</td>';
+                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['ColumnType']        = $columnArray['Type'];
+                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Null']              = $columnArray['Null'];
+                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Key']               = $columnArray['Key'];
+                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Default']           = $columnArray['Default'];
+                $this->crudValueArray[$tableKey]['Columns'][$columnKey]['Extra']             = $columnArray['Extra'];
+
+                $displayColumnName                                         = str_replace('_', ' ', ucwords($columnName, '_'));
+                $this->crudValueArray[$tableKey]['ViewIndexColumnTitleTR'] .= '<td scope="col">'.$displayColumnName.'</td>';
+                $this->crudValueArray[$tableKey]['ViewIndexColumnValueTR'] .= '<td>{{$'.$unCapitalizedTableNameWithoutUnderscores.'["'.$columnName.'"]}}</td>';
             }
         }
 //		print_x($this);
@@ -129,9 +118,10 @@ class CrudTemplateVariable
     {
         foreach ($this->projectTableNames as $tableKey => $tableName) {
             $singularTableName = Inflect::singularize($tableName);
-            echo $singularTableName;
-            echo '<br>';
-            if (!strpos($singularTableName, '_')) {
+//            echo $singularTableName;
+//            echo 'dsad';
+//            echo '<br>';
+            if (!strpos($singularTableName, '_has_')) {
                 $this->singleModelNameArray[] = $singularTableName;
             }
         }

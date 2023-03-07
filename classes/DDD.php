@@ -7,5 +7,6 @@ class DDD
 
     public function __construct()
     {
+        echo 'd';
     }
 }

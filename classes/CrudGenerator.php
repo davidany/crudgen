@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Davidany\CodeGen;
+namespace Davidany\Codegen;
 
 
 class CrudGenerator
@@ -143,19 +142,23 @@ class CrudGenerator
 
     public function buildCreateView()
     {
+//        print_x($this->crudValuesArray );
+
         foreach ($this->crudValuesArray as $key => $value) {
             $formBlockBuilder = '';
 
-            foreach ($value['Columns'] as $innerKey => $innerValue) {
-                $columnName           = $innerValue['ColumnName'];
-                $viewDisplayTableName = $innerValue['ColumnDisplayName'];
-                $formBlock            = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-view'));
-                $formBlock            = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+            if (!isset($value['Columns'])) {
+//                print_x($value);
+            } else {
+                foreach ($value['Columns'] as $innerKey => $innerValue) {
+                    $columnName           = $innerValue['ColumnName'];
+                    $viewDisplayTableName = $innerValue['ColumnDisplayName'];
+                    $formBlock            = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-view'));
+                    $formBlock            = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
 
-                $formBlockBuilder .= $formBlock;
+                    $formBlockBuilder .= $formBlock;
+                }
             }
-
-
             $viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
             $viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
 
@@ -179,34 +182,37 @@ class CrudGenerator
         foreach ($this->crudValuesArray as $key => $value) {
             $formBlockBuilder = '';
 
-            foreach ($value['Columns'] as $innerKey => $innerValue) {
-                $columnName                = $innerValue['ColumnName'];
-                $viewDisplayTableName      = $innerValue['ColumnDisplayName'];
+            if (!isset($value['Columns'])) {
+//                print_x($value);
+            } else {
+                foreach ($value['Columns'] as $innerKey => $innerValue) {
+                    $columnName                = $innerValue['ColumnName'];
+                    $viewDisplayTableName      = $innerValue['ColumnDisplayName'];
+                    $viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
+
+                    $formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('paragraph-list-columns'));
+                    $formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+                    $formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+
+                    $formBlockBuilder .= $formBlock;
+                }
+
+                $viewFolderName            = $this->crudValuesArray[$key]['ViewFolderName'];
+                $viewDisplayTableName      = $this->crudValuesArray[$key]['ViewDisplayTableName'];
                 $viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
 
-                $formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('paragraph-list-columns'));
-                $formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
-                $formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+                if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
+                } else {
+                    if (!file_exists($this->destinationPath.'views/'.$viewFolderName)) {
+                        mkdir($this->destinationPath.'views/'.$viewFolderName.'/', 0777, true);
+                    }
+                    $modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('show'));
+                    $modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+                    $modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
+                    $modelTemplate = str_replace(['{{ParagraphListColumns}}'], [$formBlockBuilder], $modelTemplate);
 
-                $formBlockBuilder .= $formBlock;
-            }
-
-
-            $viewFolderName            = $this->crudValuesArray[$key]['ViewFolderName'];
-            $viewDisplayTableName      = $this->crudValuesArray[$key]['ViewDisplayTableName'];
-            $viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
-
-            if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
-            } else {
-                if (!file_exists($this->destinationPath.'views/'.$viewFolderName)) {
-                    mkdir($this->destinationPath.'views/'.$viewFolderName.'/', 0777, true);
+                    file_put_contents($this->destinationPath."views/{$viewFolderName}/show.blade.php", $modelTemplate);
                 }
-                $modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('show'));
-                $modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-                $modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
-                $modelTemplate = str_replace(['{{ParagraphListColumns}}'], [$formBlockBuilder], $modelTemplate);
-
-                file_put_contents($this->destinationPath."views/{$viewFolderName}/show.blade.php", $modelTemplate);
             }
         }
     }
@@ -216,32 +222,36 @@ class CrudGenerator
         foreach ($this->crudValuesArray as $key => $value) {
             $formBlockBuilder = '';
 
-            foreach ($value['Columns'] as $innerKey => $innerValue) {
-                $columnName                = $innerValue['ColumnName'];
-                $viewDisplayTableName      = $innerValue['ColumnDisplayName'];
-                $viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
-
-                $formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
-                $formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
-                $formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
-
-                $formBlockBuilder .= $formBlock;
-            }
-
-
-            $viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
-            $viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
-            if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
+            if (!isset($value['Columns'])) {
+//                print_x($value);
             } else {
-                if (!file_exists($this->destinationPath.'views/'.$viewFolderName)) {
-                    mkdir($this->destinationPath.'views/'.$viewFolderName.'/', 0777, true);
-                }
-                $modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
-                $modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
-                $modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
-                $modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+                foreach ($value['Columns'] as $innerKey => $innerValue) {
+                    $columnName                = $innerValue['ColumnName'];
+                    $viewDisplayTableName      = $innerValue['ColumnDisplayName'];
+                    $viewClassVariableSingular = $this->crudValuesArray[$key]['ViewClassVariableSingular'];
 
-                file_put_contents($this->destinationPath."views/{$viewFolderName}/edit.blade.php", $modelTemplate);
+                    $formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
+                    $formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
+                    $formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
+
+                    $formBlockBuilder .= $formBlock;
+                }
+
+
+                $viewFolderName       = $this->crudValuesArray[$key]['ViewFolderName'];
+                $viewDisplayTableName = $this->crudValuesArray[$key]['ViewDisplayTableName'];
+                if (($viewFolderName == 'migration') || ($viewFolderName == 'password-reset')) {
+                } else {
+                    if (!file_exists($this->destinationPath.'views/'.$viewFolderName)) {
+                        mkdir($this->destinationPath.'views/'.$viewFolderName.'/', 0777, true);
+                    }
+                    $modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $this->getStub('edit'));
+                    $modelTemplate = str_replace(['{{ViewDisplayTableName}}'], [$viewDisplayTableName], $modelTemplate);
+                    $modelTemplate = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $modelTemplate);
+                    $modelTemplate = str_replace(['{{FormBlockBuilder}}'], [$formBlockBuilder], $modelTemplate);
+
+                    file_put_contents($this->destinationPath."views/{$viewFolderName}/edit.blade.php", $modelTemplate);
+                }
             }
         }
     }
@@ -249,27 +259,31 @@ class CrudGenerator
     public function buildRoute()
     {
         $routeBuilder = '';
-        foreach ($this->crudValuesArray as $key => $value) {
-            $controllerName = $this->crudValuesArray[$key]['ControllerName'];
-            $viewFolderName = $this->crudValuesArray[$key]['ViewFolderName'];
+        if (!isset($value['Columns'])) {
+//                print_x($value);
+        } else {
+            foreach ($this->crudValuesArray as $key => $value) {
+                $controllerName = $this->crudValuesArray[$key]['ControllerName'];
+                $viewFolderName = $this->crudValuesArray[$key]['ViewFolderName'];
 
 
 //			echo $controllerName . ' route route <br> <br> ';
 
-            if (($controllerName == 'MigrationController') || ($controllerName == 'PasswordResetController')) {
-            } else {
-                if (!file_exists($this->destinationPath.'routes/')) {
-                    mkdir($this->destinationPath.'routes/', 0777, true);
-                }
-                $modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $this->getStub('route'));
-                $modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
+                if (($controllerName == 'MigrationController') || ($controllerName == 'PasswordResetController')) {
+                } else {
+                    if (!file_exists($this->destinationPath.'routes/')) {
+                        mkdir($this->destinationPath.'routes/', 0777, true);
+                    }
+                    $modelTemplate = str_replace(['{{ControllerName}}'], [$controllerName], $this->getStub('route'));
+                    $modelTemplate = str_replace(['{{ViewFolderName}}'], [$viewFolderName], $modelTemplate);
 
-                $routeBuilder .= $modelTemplate;
-                $routeBuilder .= "\r\n";
-                $routeBuilder .= "\r\n";
-                $routeBuilder .= "\r\n";
+                    $routeBuilder .= $modelTemplate;
+                    $routeBuilder .= "\r\n";
+                    $routeBuilder .= "\r\n";
+                    $routeBuilder .= "\r\n";
+                }
+                file_put_contents($this->destinationPath."routes/web.php", $routeBuilder);
             }
-            file_put_contents($this->destinationPath."routes/web.php", $routeBuilder);
         }
     }
 
@@ -277,129 +291,132 @@ class CrudGenerator
     {
         foreach ($this->crudValuesArray as $key => $value) {
             $formBlockBuilder = '';
+            if (!isset($value['Columns'])) {
+//                print_x($value);
+            } else {
+                foreach ($value['Columns'] as $innerKey => $innerValue) {
+                    $migrationTableName = $innerValue['ColumnName'];
+                    if ($migrationTableName != 'id') {
+                        $migrationTableType = $innerValue['ColumnType'];
+                        $migrationNull      = $innerValue['Null'];
+                        $migrationKey       = $innerValue['Key'];
+                        $migrationDefault   = $innerValue['Default'];
+                        $migrationExtra     = $innerValue['Extra'];
 
-            foreach ($value['Columns'] as $innerKey => $innerValue) {
-                $migrationTableName = $innerValue['ColumnName'];
-                if ($migrationTableName != 'id') {
-                    $migrationTableType = $innerValue['ColumnType'];
-                    $migrationNull      = $innerValue['Null'];
-                    $migrationKey       = $innerValue['Key'];
-                    $migrationDefault   = $innerValue['Default'];
-                    $migrationExtra     = $innerValue['Extra'];
-
-                    $columnBuilder = '$table->';
+                        $columnBuilder = '$table->';
 
 
-                    if ($migrationKey == 'MUL') {
-                        $columnBuilder .= "unsignedInteger('$migrationTableName')";
-                    } elseif (($migrationKey == 'PRI') && ($migrationTableType == 'INT')) {
-                        $columnBuilder .= "bigIncrements('$migrationTableName')";
-                    } elseif (($migrationKey == 'PRI') && ($migrationTableType == 'bigint')) {
-                        $columnBuilder .= "bigIncrements('$migrationTableName')";
-                    } else {
-                        $tinyIntSearch      = '/^tinyint/';
-                        $bigIntSearch       = '/^bigint/';
-                        $smallIntSearch     = '/^smallint/';
-                        $bitSearch          = '/^bit/';
-                        $intSearch          = '/^int/';
-                        $decimalSearch      = '/^decimal/';
-                        $decimalInnerSearch = '/\d*\,\d*/';
-                        $timestampSearch    = '/^timestamp/';
-                        $datetimeSearch     = '/^datetime/';
-                        $dateSearch         = '/^date/';
-                        $varSearch          = '/^varchar/';
-                        $varInnerSearch     = '/\d+/';
-                        $charSearch         = '/^char/';
-                        $textSearch         = '/^text/';
-                        $enumSearch         = '/^enum/';
-
-                        if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "tinyInteger('$migrationTableName')";
-                        }
-                        if (preg_match($bigIntSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "bigInteger('$migrationTableName')";
-                        }
-                        if (preg_match($smallIntSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "smallInteger('$migrationTableName')";
-                        }
-                        if (preg_match($bitSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "smallInteger('$migrationTableName')";
-                        }
-                        if (preg_match($intSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "integer('$migrationTableName')";
-                        }
-                        if (preg_match($timestampSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "timestamp('$migrationTableName')";
-                        }
-                        if (preg_match($datetimeSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "dateTime('$migrationTableName')";
-                        }
-                        if (preg_match($dateSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "date('$migrationTableName')";
-                        }
-                        if (preg_match($textSearch, $migrationTableType, $match)) {
-                            $columnBuilder .= "text('$migrationTableName')";
-                        }
-                        if (preg_match($enumSearch, $migrationTableType, $match)) {
-                            if (preg_match('!\(([^\)]+)\)!', $migrationTableType, $enumValues)) {
-                                $enumValueText = $enumValues[1];
-                            }
-                            $enumValueArray = explode(',', $enumValueText);
-                            $columnBuilder  .= "enum('$migrationTableName',[";
-                            foreach ($enumValueArray as $value) {
-                                $columnBuilder .= $value.',';
-                            }
-                            $columnBuilder = rtrim($columnBuilder, ',');
-                            $columnBuilder .= '])';
-                        }
-
-                        if (preg_match($decimalSearch, $migrationTableType, $match)) {
-                            preg_match($decimalInnerSearch, $migrationTableType, $matches);
-                            $deciNum       = explode(',', $matches[0]);
-                            $columnBuilder .= "decimal('$migrationTableName',$deciNum[0],$deciNum[1])";
-                        }
-                        if (preg_match($varSearch, $migrationTableType, $match)) {
-                            preg_match($varInnerSearch, $migrationTableType, $matches);
-                            if ($matches[0] > 500) {
-                                $columnBuilder .= "string('$migrationTableName',500)";
-                            } else {
-                                $columnBuilder .= "string('$migrationTableName',$matches[0])";
-                            }
-                            var_dump($columnBuilder);
-                        }
-                        if (preg_match($charSearch, $migrationTableType, $match)) {
-                            preg_match($varInnerSearch, $migrationTableType, $matches);
-                            $columnBuilder .= "char('$migrationTableName',$matches[0])";
-                        }
-                    }
-//				if ($migrationTableType == )
-                    if ($migrationDefault != '') {
-                        if ($migrationDefault == 'CURRENT_TIMESTAMP') {
-                            $columnBuilder .= "->useCurrent()";
+                        if ($migrationKey == 'MUL') {
+                            $columnBuilder .= "unsignedInteger('$migrationTableName')";
+                        } elseif (($migrationKey == 'PRI') && ($migrationTableType == 'INT')) {
+                            $columnBuilder .= "bigIncrements('$migrationTableName')";
+                        } elseif (($migrationKey == 'PRI') && ($migrationTableType == 'bigint')) {
+                            $columnBuilder .= "bigIncrements('$migrationTableName')";
                         } else {
+                            $tinyIntSearch      = '/^tinyint/';
+                            $bigIntSearch       = '/^bigint/';
+                            $smallIntSearch     = '/^smallint/';
+                            $bitSearch          = '/^bit/';
+                            $intSearch          = '/^int/';
+                            $decimalSearch      = '/^decimal/';
+                            $decimalInnerSearch = '/\d*\,\d*/';
+                            $timestampSearch    = '/^timestamp/';
+                            $datetimeSearch     = '/^datetime/';
+                            $dateSearch         = '/^date/';
+                            $varSearch          = '/^varchar/';
+                            $varInnerSearch     = '/\d+/';
+                            $charSearch         = '/^char/';
+                            $textSearch         = '/^text/';
+                            $enumSearch         = '/^enum/';
+
+                            if (preg_match($tinyIntSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "tinyInteger('$migrationTableName')";
+                            }
+                            if (preg_match($bigIntSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "bigInteger('$migrationTableName')";
+                            }
+                            if (preg_match($smallIntSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "smallInteger('$migrationTableName')";
+                            }
                             if (preg_match($bitSearch, $migrationTableType, $match)) {
-                                $columnBuilder .= "->default(0)";
-                            } elseif (is_string($migrationClassName)) {
-                                $columnBuilder .= "->default('$migrationDefault')";
-                            } else {
-                                $columnBuilder .= "->default($migrationDefault)";
+                                $columnBuilder .= "smallInteger('$migrationTableName')";
+                            }
+                            if (preg_match($intSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "integer('$migrationTableName')";
+                            }
+                            if (preg_match($timestampSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "timestamp('$migrationTableName')";
+                            }
+                            if (preg_match($datetimeSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "dateTime('$migrationTableName')";
+                            }
+                            if (preg_match($dateSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "date('$migrationTableName')";
+                            }
+                            if (preg_match($textSearch, $migrationTableType, $match)) {
+                                $columnBuilder .= "text('$migrationTableName')";
+                            }
+                            if (preg_match($enumSearch, $migrationTableType, $match)) {
+                                if (preg_match('!\(([^\)]+)\)!', $migrationTableType, $enumValues)) {
+                                    $enumValueText = $enumValues[1];
+                                }
+                                $enumValueArray = explode(',', $enumValueText);
+                                $columnBuilder  .= "enum('$migrationTableName',[";
+                                foreach ($enumValueArray as $value) {
+                                    $columnBuilder .= $value.',';
+                                }
+                                $columnBuilder = rtrim($columnBuilder, ',');
+                                $columnBuilder .= '])';
+                            }
+
+                            if (preg_match($decimalSearch, $migrationTableType, $match)) {
+                                preg_match($decimalInnerSearch, $migrationTableType, $matches);
+                                $deciNum       = explode(',', $matches[0]);
+                                $columnBuilder .= "decimal('$migrationTableName',$deciNum[0],$deciNum[1])";
+                            }
+                            if (preg_match($varSearch, $migrationTableType, $match)) {
+                                preg_match($varInnerSearch, $migrationTableType, $matches);
+                                if ($matches[0] > 500) {
+                                    $columnBuilder .= "string('$migrationTableName',500)";
+                                } else {
+                                    $columnBuilder .= "string('$migrationTableName',$matches[0])";
+                                }
+                                // var_dump($columnBuilder);
+                            }
+                            if (preg_match($charSearch, $migrationTableType, $match)) {
+                                preg_match($varInnerSearch, $migrationTableType, $matches);
+                                $columnBuilder .= "char('$migrationTableName',$matches[0])";
                             }
                         }
-                    }
+//				if ($migrationTableType == )
+                        if ($migrationDefault != '') {
+                            if ($migrationDefault == 'CURRENT_TIMESTAMP') {
+                                $columnBuilder .= "->useCurrent()";
+                            } else {
+                                if (preg_match($bitSearch, $migrationTableType, $match)) {
+                                    $columnBuilder .= "->default(0)";
+                                } elseif (is_string($migrationClassName)) {
+                                    $columnBuilder .= "->default('$migrationDefault')";
+                                } else {
+                                    $columnBuilder .= "->default($migrationDefault)";
+                                }
+                            }
+                        }
 
-                    if ($migrationNull == 'YES') {
-                        $columnBuilder .= '->nullable()';
-                    }
+                        if ($migrationNull == 'YES') {
+                            $columnBuilder .= '->nullable()';
+                        }
 
-                    $columnBuilder .= ';';
+                        $columnBuilder .= ';';
 
 //				$formBlock = str_replace(['{{ColumnName}}'], [$columnName], $this->getStub('bootstrap-form-group-edit'));
 //				$formBlock = str_replace(['{{ColumnDisplayName}}'], [$viewDisplayTableName], $formBlock);
 //				$formBlock = str_replace(['{{ViewClassVariableSingular}}'], [$viewClassVariableSingular], $formBlock);
 
-                    $formBlockBuilder .= $columnBuilder;
-                } else {
-                    $formBlockBuilder .= '$table->id();';
+                        $formBlockBuilder .= $columnBuilder;
+                    } else {
+                        $formBlockBuilder .= '$table->id();';
+                    }
                 }
             }
             $formBlockBuilder .= '$table->timestamps();';
