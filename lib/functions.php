@@ -53,7 +53,7 @@ function dnl($data)
 	echo d($data) . "<br>\n";
 }
 
-function dd($data)
+function ddd($data)
 {
 	echo dnl($data);
 	exit;
