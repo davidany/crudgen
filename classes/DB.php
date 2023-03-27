@@ -18,7 +18,7 @@ class DB
         }
     }
 
- public static function getInstance($db_name = DB_NAME, $db_host = DB_HOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
+    public static function getInstance($db_name = DB_NAME, $db_host = DB_HOST, $db_user = DB_USERNAME, $db_pass = DB_PASSWORD)
     {
         $key = "$db_name.$db_host.$db_user";
         if (!isset(self::$instances[$key])) {
@@ -26,6 +26,27 @@ class DB
         }
 
         return self::$instances[$key];
+    }
+
+    public static function getForeignKeysForTable($table_name)
+    {
+        $stmt = self::$instances["$db_name.$db_host.$db_user"]->prepare("
+            SELECT
+                CONSTRAINT_NAME,
+                COLUMN_NAME,
+                REFERENCED_TABLE_NAME,
+                REFERENCED_COLUMN_NAME
+            FROM
+                INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+            WHERE
+                TABLE_NAME = :table_name
+                AND CONSTRAINT_NAME <> 'PRIMARY'
+                AND REFERENCED_TABLE_NAME IS NOT NULL
+        ");
+        $stmt->bindParam(':table_name', $table_name);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 

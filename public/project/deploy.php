@@ -114,15 +114,17 @@ $dbCredentialRow = $dbCredential->getByProjectId($projectId);
 				$crudTemplateVariable->build($dbCredentialRow, $projectId);
 
 			//	print_x($crudTemplateVariable);
-				$generate = new CrudGenerator($crudTemplateVariable->crudValueArray);
+				$generate = new CrudGenerator($crudTemplateVariable->laravelBuilderValueArray);
 				$generate->getDestinationPath($projectRows->name);
 				$generate->getTables();
-				$generate->buildModel($crudTemplateVariable->singleModelNameArray);
+				$generate->buildModel();
 				$generate->buildController();
+				$generate->buildApiController();
 				$generate->buildIndexView();
 				$generate->buildCreateView();
-//				die('d');
+
 				$generate->buildShowView();
+
 				$generate->buildEditView();
 				$generate->buildRoute();
 				$generate->buildMigration();
